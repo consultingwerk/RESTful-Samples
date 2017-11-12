@@ -25,4 +25,5 @@ The relevant configuration settings are:
 
 # Sample URLs
 
+- http://localhost:8830/web/Salesreps
 - http://localhost:8830/web/Salesreps/BBB
