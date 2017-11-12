@@ -12,7 +12,7 @@
          The precedence order is:
             1) local properties definitions (via the Spring bean reference "localProperties")
             2) oeablSecurity.properties in oeabl web application's WEB-INF folder
-            3) oeablSecurity.properties in the PASOE instance's ablapps/<-p>/conf/ folder
+            3) oeablSecurity.properties in the PASOE instance's ablapps/<restfulpasoe>/conf/ folder
             4) oeablSecurity.properties in the PASOE instance's /conf folder
             5) oeablSecurity.properties in DLC/servers/pasoe template's /conf folder
 

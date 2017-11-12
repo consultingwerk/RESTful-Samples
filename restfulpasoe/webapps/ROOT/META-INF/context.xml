@@ -7,6 +7,6 @@
   <Environment
     name="logback/context-name"
     type="java.lang.String"
-    value="-p"
+    value="restfulpasoe"
     override="false" />
 </Context>
