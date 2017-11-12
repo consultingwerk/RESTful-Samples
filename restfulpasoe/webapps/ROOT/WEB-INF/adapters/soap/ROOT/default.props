@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ApplicationRuntimeProperties xmlns="urn:schemas-progress-com:WSAD:0011" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <runtimePropertyVersion>5</runtimePropertyVersion>
+    <staleO4GLObjectTimeout>0</staleO4GLObjectTimeout>
+    <minSessions>1</minSessions>
+    <maxSessions>0</maxSessions>
+    <initialSessions>1</initialSessions>
+    <idleSessionTimeout>0</idleSessionTimeout>
+    <requestWaitTimeout>-1</requestWaitTimeout>
+    <serviceAvailable>1</serviceAvailable>
+    <serviceFaultLevel>2</serviceFaultLevel>
+    <waitIfBusy>0</waitIfBusy>
+    <connectionLifetime>0</connectionLifetime>
+    <minIdleConnections>0</minIdleConnections>
+    <appServerKeepalive>denyClientASK,allowServerASK</appServerKeepalive>
+    <clientASKActivityTimeout>60</clientASKActivityTimeout>
+    <clientASKResponseTimeout>60</clientASKResponseTimeout>
+</ApplicationRuntimeProperties>

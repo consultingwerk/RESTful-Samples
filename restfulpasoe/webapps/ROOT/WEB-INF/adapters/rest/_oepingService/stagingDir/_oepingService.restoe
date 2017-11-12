@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pidl:description targetNamespace="urn:schemas-progress-com:bpm:appserverbinding:0001" serviceType="wsad:OEAppServerInvoke" xmlns:pidl="http://www.progress.com/caf/idl1.0" xmlns:java="http://www.progress.com/adapters/idl1.0/javatype" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:wsad="urn:schemas-progress-com:bpm:appserverbinding:0001">
+  <pidl:interface name="com.progress.openedge.pdt.bpminterfaces">
+    <pidl:operation name="OpenEdge.Rest.Admin.AppServerStatus..ServerStatus" pattern="http://www.progress.com/caf/idl1.0/request-response">
+      <pidl:output messageLabel="retVal" req="false" type="java:String">
+    </pidl:output>
+    </pidl:operation>
+  </pidl:interface>
+  <pidl:binding name="com.progress.openedge.pdt.bpmbindings" interface="wsad:com.progress.openedge.pdt.bpminterfaces" type="urn:schemas-progress-com:bpm:appserverbinding:0001">
+    <wsad:Operation xmlns:wsad="urn:schemas-progress-com:bpm:appserverbinding:0001" executionMode="11" isPersistent="false" useFullName="false">
+  <wsad:Name>OpenEdge.Rest.Admin.AppServerStatus</wsad:Name>
+  <wsad:ProcPath/>
+  <wsad:ProPath/>
+  <wsad:ProcExt>cls</wsad:ProcExt>
+  <wsad:ProcDetail IsMappedToSubmit="false" IsTTResultSet="true" isCustomized="false" useRetVal="false" usesBeforeImageDefault="true" usesTTMappingDefault="true" usesUnknownDefault="true">
+    <wsad:Name>OpenEdge.Rest.Admin.AppServerStatus</wsad:Name>
+    <wsad:HelpString/>
+    <wsad:InternalProc hasBadParams="false" isExcluded="false">
+      <wsad:Name>ServerStatus</wsad:Name>
+      <wsad:ProcType>2</wsad:ProcType>
+      <wsad:MethodDetail IsMappedToSubmit="false" IsTTResultSet="true" isCustomized="false" useRetVal="true" usesBeforeImageDefault="false" usesTTMappingDefault="true" usesUnknownDefault="true">
+        <wsad:Name>ServerStatus</wsad:Name>
+        <wsad:ReturnValue allowUnknown="true" ordinal="0" writeXmlBeforeImage="false">
+          <wsad:Name>retVal</wsad:Name>
+          <wsad:OrigName>retVal</wsad:OrigName>
+          <wsad:Type>1</wsad:Type>
+          <wsad:Mode>2</wsad:Mode>
+        </wsad:ReturnValue>
+      </wsad:MethodDetail>
+    </wsad:InternalProc>
+  </wsad:ProcDetail>
+</wsad:Operation>
+  </pidl:binding>
+</pidl:description>

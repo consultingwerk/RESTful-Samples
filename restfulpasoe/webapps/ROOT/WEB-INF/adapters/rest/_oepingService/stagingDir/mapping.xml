@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans>
+        <mapping:MappingBean  id="mapping" xmlns:mapping="http://www.progress.com/caf/mapping1.0">
+	<![CDATA[<mapping:messageMapping xmlns:conditional="http://www.progress.com/caf/mapping1.0/conditional" xmlns:mapping="http://www.progress.com/caf/mapping1.0">
+  <mapping:mapInput/>
+  <mapping:mapOutput>
+    <conditional:conditionalRuleSet>
+      <conditional:if condition="${(rest.resourcename == '__oeping') and (rest.operationname == 'OpenEdge.Rest.Admin.AppServerStatus..ServerStatus') and (rest.verb == 'GET')}">
+        <mapping:rule action="None" resource="" source="${idl.param['retVal']}" target="${json.object['response'].string['_retVal']}" type="INTERFACE_PARAM"/>
+      </conditional:if>
+    </conditional:conditionalRuleSet>
+  </mapping:mapOutput>
+</mapping:messageMapping>]]>
+        </mapping:MappingBean>
+</beans>
+

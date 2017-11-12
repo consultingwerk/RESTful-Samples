@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<prgs:model xmlns:prgs="http://www.progress.com/caf/camel/component/prgrs" id="resourceModel">
+  <prgs:resource consumes="application/json" name="__oeping" path="/_oeping" produces="application/json">
+    <prgs:operation consumes="application/json" idls="_oepingService.restoe::com.progress.openedge.pdt.bpmbindings" name="OpenEdge.Rest.Admin.AppServerStatus..ServerStatus" produces="application/json" verb="GET"/>
+  </prgs:resource>
+</prgs:model>
