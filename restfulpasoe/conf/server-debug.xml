@@ -1,0 +1,224 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<!--
+  IMPORTANT ADMINISTRATOR INFORMATION
+  Progress Software Corporation has customized this configuration file to 
+  use Java system properties that are set and externally configured via
+  the Tomcat conf/catalina.properties file.  Removing the Java property
+  references ( ${java-prop-nam} ) may impact the operation of other Progress
+  utilities that reference and maintain catalina.properties.
+
+  Optional Tomcat features are deliniated by beginning and ending XML
+  comment syntax so they can be controlled using the bin/tcman utility's
+  'feature' action:
+
+         feature:begin:feature-name:{on|off}
+             <... />
+         feature:end:feature-name:{on|off} 
+
+     Note:  feature-name in begin and end lines must match exactly for
+            length and case sensitivity
+
+-->
+
+<Server port="${psc.as.shut.port}" shutdown="${psc.as.shut.pwd}">
+  <Listener className="org.apache.catalina.startup.VersionLoggerListener" />
+<!-- feature:begin:SecurityListener:off
+  <Listener className="org.apache.catalina.security.SecurityListener" 
+            checkedOsUser=""
+            minumumUmask="" />
+     feature:end:SecurityListener:off -->
+
+  <Listener className="org.apache.catalina.core.AprLifecycleListener" SSLEngine="on" />
+  <!-- Prevent memory leaks due to use of particular java/javax APIs-->
+  <Listener className="org.apache.catalina.core.JreMemoryLeakPreventionListener" />
+  <Listener className="org.apache.catalina.mbeans.GlobalResourcesLifecycleListener" />
+  <Listener className="org.apache.catalina.core.ThreadLocalLeakPreventionListener" />
+
+  <!-- feature:begin:PSClifecycle:off
+  <Listener className="com.progress.appserv.services.lifecycle.OeLifecycleListener"/>
+       feature:end:PSClifecycle:off -->
+
+<!-- feature:begin:JMXLifecycle:off
+  <Listener className="org.apache.catalina.mbeans.JmxRemoteLifecycleListener"
+            rmiRegistryPortPlatform="${psc.as.jmxregistry.port}" 
+            rmiServerPortPlatform="${psc.as.jmxserver.port}" />  
+     feature:end:JMXLifecycle:off -->
+
+  <GlobalNamingResources>
+    <Resource name="UserDatabase" auth="Container"
+              type="org.apache.catalina.UserDatabase"
+              description="User database that can be updated and saved"
+              factory="org.apache.catalina.users.MemoryUserDatabaseFactory"
+              pathname="${psc.as.usersfile}" />
+
+
+     <!-- This is resource definition for the ServiceRegistry object placed in JNDI Namespace.
+          The declaration below creates a singleton instance of a ServiceRegistry object.
+          The object is read/write so that its readable and writable by all the webapp contexts.
+     -->
+    <!-- feature:begin:PSCRegistry:off
+    <Resource name="ServiceRegistry/ServiceRegistryFactory" auth="Container"
+              type="com.progress.appserv.services.naming.ServiceRegistry"
+              description="Services database that can be updated and saved"
+              factory="com.progress.appserv.services.naming.ServiceRegistryFactory"  
+              readonly="false" singleton="true" />
+         feature:end:PSCRegistry:off -->
+
+  </GlobalNamingResources>
+
+  <Service name="Catalina">
+    <Executor name="tomcatThreadPool" namePrefix="catalina-exec-"
+              maxThreads="${psc.as.executor.maxthreads}" 
+              minSpareThreads="${psc.as.executor.minsparethreads}"/>
+
+<!-- feature:begin:HTTP:on -->
+    <Connector executor="tomcatThreadPool"
+               port="${psc.as.http.port}" 
+               protocol="HTTP/1.1"
+               scheme="http" 
+               secure="false"
+               connectionTimeout="${psc.as.http.connectiontimeout}"
+               asyncTimeout="${psc.as.msg.timeout}"
+               maxPostSize="${psc.as.msg.maxpostsize}"
+               maxHttpHeaderSize="8192"
+               acceptCount="${psc.as.http.maxqueuesize}"
+               maxConnections="${psc.as.http.maxconnections}"
+               maxKeepAliveRequests="${psc.as.msg.maxpipeline}"
+               socketBuffer="${psc.as.msg.socketbuffer}"
+               redirectPort="${psc.as.https.port}" 
+               URIEncoding="${psc.as.http.uriencoding}"
+               compression="${psc.as.http.compress}"
+               compressionMinSize="${psc.as.compress.min}"
+               noCompressionUserAgents="gozilla,traviata"
+               compressableMimeTypes="${psc.as.compress.types}" 
+               xpoweredBy="false" 
+               debug="99" />
+<!-- feature:end:HTTP:on -->
+
+<!-- feature:begin:HTTPS:on -->
+    <Connector executor="tomcatThreadPool"
+               port="${psc.as.https.port}" 
+               protocol="HTTP/1.1" 
+               asyncTimeout="10000"
+               scheme="https" 
+               secure="true"
+               maxPostSize="${psc.as.msg.maxpostsize}"
+               maxHttpHeaderSize="8192"
+               acceptCount="${psc.as.https.maxqueuesize}"
+               maxConnections="${psc.as.https.maxconnections}"
+               maxKeepAliveRequests="${psc.as.msg.maxpipeline}"
+               socketBuffer="${psc.as.msg.socketbuffer}"
+               SSLEnabled="true"
+               ciphers="${psc.as.https.ciphers}"
+               clientAuth="${psc.as.https.clientauth}"
+               sessionTimeout="${psc.as.https.sessiontimeout}"
+               sslEnabledProtocols="${psc.as.https.protocol}"
+               keystoreFile="${catalina.base}/conf/tomcat-keystore.p12" 
+               keystorePass="${psc.as.https.keypass}" 
+               keyAlias="${psc.as.https.keyalias}" 
+               keystoreType="${psc.as.https.storeType}" 
+               URIEncoding="${psc.as.http.uriencoding}"
+               compression="${psc.as.https.compress}"
+               compressionMinSize="${psc.as.compress.min}"
+               noCompressionUserAgents="gozilla,traviata"
+               compressableMimeTypes="${psc.as.compress.types}" 
+               xpoweredBy="false"
+               debug="99" />
+   <!-- Teporarily removed properties due to Tomcat 8.5.5 error
+               truststoreFile="${catalina.base}/conf/tomcat-certstore.jks"
+               truststorePass="${psc.as.https.trustpass}"
+               truststoreType="${psc.as.https.trustType}"
+   -->
+
+<!-- feature:end:HTTPS:on -->
+
+<!-- feature:begin:AJP13:off
+    <Connector executor="tomcatThreadPool"
+               port="${psc.as.ajp13.port}" 
+               protocol="AJP/1.3" 
+               asyncTimeout="${psc.as.msg.timeout}"
+               maxPostSize="${psc.as.msg.maxpostsize}"
+               acceptCount="${psc.as.http.maxqueuesize}"
+               maxConnections="${psc.as.http.maxconnections}"
+               tomcatAuthentication="${psc.as.ajp13.tomcatauth}"
+               URIEncoding="${psc.as.http.uriencoding}"
+               redirectPort="${psc.as.https.port}" />
+     feature:end:AJP13:off -->
+
+    <Engine name="Catalina" 
+            defaultHost="localhost" 
+            jvmRoute="${psc.as.alias}" 
+            startStopThreads="0"
+            debug="99" >
+
+      <Realm className="org.apache.catalina.realm.LockOutRealm"
+          cacheRemovalWarningTime="${psc.as.realm.removeWarningTime}"
+          cacheSize="${psc.as.realm.cacheSize}"
+          failureCount="${psc.as.realm.failureCount}" 
+          lockOutTime="${psc.as.realm.lockOutTime}" 
+          debug="99" >
+
+<!-- feature:begin:UserDatabase:on -->
+        <Realm className="org.apache.catalina.realm.UserDatabaseRealm"
+               resourceName="UserDatabase"
+               debug="99" />
+<!-- feature:end:UserDatabase:on -->
+
+<!-- feature:begin:JAASRealm:off
+        <Realm className="org.apache.catalina.realm.JAASRealm"
+               appName="TCRealm"
+               configFile="tomcat-jaas.config"
+               userClassNames="org.foobar.realm.FooUser"
+               roleClassNames="org.foobar.realm.FooRole" /> 
+    feature:end:JAASRealm:off -->
+
+<!-- feature:begin:LDAPRealm:off
+        <Realm className="org.apache.catalina.realm.JNDIRealm"
+               connectionURL="ldap://localhost:389"
+               userPattern="uid={0},ou=people,dc=mycompany,dc=com"
+               roleBase="ou=groups,dc=mycompany,dc=com"
+               roleName="cn"
+               roleSearch="(uniqueMember={0})" />
+    feature:end:LDAPRealm:off -->
+
+      </Realm>
+
+      <Host name="localhost"  
+            appBase="${psc.as.webappdir}"
+            unpackWARs="${psc.as.unpackwars}" 
+            autoDeploy="${psc.as.autodeploy}">
+
+
+<!-- feature:begin:PASInstrument:off
+        <Valve className="com.progress.appserv.services.valve.PASValve" />
+    feature:end:PASInstrument:off -->
+
+<!-- feature:begin:AccessLog:on -->
+        <Valve className="org.apache.catalina.valves.AccessLogValve" 
+               directory="${catalina.base}/logs"
+               prefix="localhost_access_log." 
+               suffix=".txt"
+               pattern="debug: %h %l %u %t &quot;%r&quot; %s %b %D" />
+<!-- feature:end:AccessLog:on -->
+
+      </Host>
+    </Engine>
+  </Service>
+</Server>

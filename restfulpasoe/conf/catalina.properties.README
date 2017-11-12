@@ -1,0 +1,310 @@
+# Custom Progress Application Server properties used by the tcman administration
+# utilities or by deployed web applications.  The Java system properties defined
+# here will be consumed by the tomcat server's configuration file (server.xml).
+# Instead of editing and maintaining XML formated files, commonly configured
+# and changed values are stored here for easy editing by automated scripts and
+# editors. The tomcat server configuration files will contain refererences, 
+# resolved at load time via ${prop-name}, to these values.
+# 
+
+# The network port numbers used by the tomcat [server.xml] configuration
+# The HTTP protocol connector port (required)
+# Tomcat property reference: <Connector port >
+psc.as.http.port=8080
+
+# The HTTPS (SSL/TLS) protocol connector port (optional)
+# Tomcat property reference: <Connector port >
+psc.as.https.port=8443
+
+# The AJP13 Apache server connector port (optional)
+# Tomcat property reference: <Connector port >
+psc.as.ajp13.port=8009
+
+# Note: Unix platforms may disable a shutdown port and use signals to halt a
+# running server. Windows platforms, lacking an effective signalling mechanism,
+# require a valid port number.
+# Tomcat property reference: <Server port >
+psc.as.shut.port=-1
+
+# A private shutdown port access code to prevent one server instance from being
+# shutdown by anyone
+# Tomcat property reference: <Server shutdown >
+psc.as.shut.pwd=SHUTDOWN
+
+# JAAS (SSL/TLS) keystore access used by the HTTPS connector
+# The password to use when accessing the SSL/TLS keystore tomcat-keystore.p12
+# Tomcat property reference: <Connector keystorePass >
+psc.as.https.keypass=password
+
+# The alias name of the keystore entry holding the server's private key &
+# public key certificate
+# Tomcat property reference: <Connector keyAlias >
+psc.as.https.keyalias=test
+
+# The type of Java keystore format used by tomcat-keystore.p12
+# Tomcat property reference: <Connector keystoreType >
+psc.as.https.storeType=PKCS12
+
+# The Java certificate store passowrd used to acess tomcat-certstore.jks
+# which holds the root/intermediate CA certificates used to validate 
+# clients using SSL client authentication
+psc.as.https.trustpass=password
+
+# The type of Java certificate store format used by tomcat-certstore.jks
+# to hold the root/intermediate CA certificates used to validate 
+# clients using SSL client authentication
+psc.as.https.trustType=JKS
+
+# The SSL/TLS protocol type(s) to support
+# Tomcat property reference: <Connector sslEnabledProtocols >
+psc.as.https.protocol=TLSv1,TLSv1.1,TLSv1.2
+
+# The SSL/TLS allowed cipher-suites - see JSSE vendor documentation
+# Tomcat property reference: <Connector ciphers >
+psc.as.https.ciphers=ALL
+
+# The SSL/TLS session timeout in seconds
+# Tomcat property reference: <Connector sessionTimeout >
+psc.as.https.sessionTimeout=86400
+
+# An optional directory used to deploy web applications to.  If a relative path
+# is specified, it will be relative to the instance's root directory.  If an
+# absolute path is used it must conform to a single platform type.
+# Tomcat property reference: <Host appBase >
+psc.as.webappdir=webapps
+
+# Security settings used by the tomcat server for deploying web applications
+# Autodeploy is turned off so that nobody can start a running application by
+# simply copying the web archvie (.war) into the deployment directory
+# Tomcat property reference: <Host autoDeploy >
+psc.as.autodeploy=false
+
+# Unpacking of a web archive (.war) file on server instance startup is allowed
+# for administrators.
+# Tomcat property reference: <Host unpackWARs >
+psc.as.unpackwars=true
+
+# Each server instance's web applications will reference Java libraries from
+# the server instance, and then the 'home' server install.  Options Java shared 
+# library locations can be specified here that exist outside of the server
+# instance's directory structure.  The value should be in the form used above
+# for listing one or more libraries/classes
+# Tomcat property reference: < N/A >
+psc.as.commonlib=
+
+# The name and location of local user account file (Tomcat UserMemoryRealm)
+# You may change this to be external to the server instance's directory tree
+# so that it does not get overwritten by incremental updates.
+# Tomcat property reference: <Resource pathname >
+psc.as.usersfile=conf/tomcat-users.xml
+
+# Tomcat server thread pool & connector settins
+
+# The maximum # of OS process threads this server will use.
+# Tomcat property reference: <Executor maxThreads >
+psc.as.executor.maxthreads=300
+
+# The number of spare threads the server will reserve for future client operations
+# Tomcat property reference: <Executor minSpareThreads >
+psc.as.executor.minsparethreads=10
+
+# The amount of milliseconds to wait between the time a client makes a TCP
+# connection and when the first HTTP request arrives
+# Tomcat property reference: <Connector connectionTimeout >
+psc.as.http.connectiontimeout=20000
+
+# The amount of milliseconds to wait between the time a client makes a TCP 
+# SSL/TLS connection and when the first HTTPS request arrives
+# Tomcat property reference: <Connector connectionTimeout    >
+psc.as.https.connectiontimeout=20000
+
+# The maximum amount of time an active HTTP request can be running before it 
+# is considered to be HUNG and will be reported in the server log file
+# Tomcat property reference: <Valve threshold >
+psc.as.stuckthreadthreshold=600
+
+# Specifies the character encoding used to decode the URI   bytes, after
+# %xx decoding the URL.  <Connector URIEncoding>
+psc.as.http.uriencoding=ISO-8859-1
+
+# Tomcat [Session] Manager options
+
+# The maximum amount of time that can elapse between client HTTP requests
+# before the client's HTTP session (identified with JSESSIONID) expires
+# and is no longer usable
+# Tomcat property reference: <Manager maxInactiveInterval >
+psc.as.session.timeout=1800
+
+# server.xml <Cluster> options
+
+# The Java class name of the Cluster session manager
+# Tomcat property reference: <Manager className >
+psc.as.clust.manager=DeltaManager
+
+# The bitmask options that control sending updates to other cluster members
+# Tomcat property reference: <Cluster channelSendOptions >
+psc.as.clust.sendoptions=8
+
+# The maximum amount of time that can elapse between client HTTP requests
+# before the client's HTTP session (identified with JSESSIONID) expires
+# and is no longer usable
+# Tomcat property reference: <Mananger maxInactivityInterval >
+psc.as.clust.inactivetimeout=1800
+
+# Indicates whether the client HTTP sessions are auto-expired on server
+# shutdown
+# Tomcat property reference: <Manager expireSessionsOnShutdown >
+psc.as.clust.expireOnShut=false
+
+# Notify other cluster listeners of HTTP session events
+# Tomcat property reference: <Manager notifyListenersOnReplication >
+psc.as.clust.notifyListeners=true
+
+# The default multi-cast network address to other cluster members
+# Tomcat property reference: <Membership address >
+psc.as.clust.mcast.addr=228.0.0.4
+
+# The default multi-cast network port 
+# Tomcat property reference: <Membership port >
+psc.as.clust.mcast.port=45564
+
+# The frequency that multi-cast messages are sent to other cluster members
+# Tomcat property reference: <Membership frequency >
+psc.as.clust.mcast.freq=500
+
+# The amount of time to wait for a cluster member to send a heartbeat 
+# before the member is dropped
+# Tomcat property reference: <Membership dropTime >
+psc.as.clust.mcast.dropafter=3000
+
+# The network address this cluster member uses to receive messages from 
+# other cluster members
+# Tomcat property reference: <Receiver address >
+psc.as.clust.recv.addr=auto
+
+# The network port this cluster member uses to receive messages from 
+# other cluster members
+# Tomcat property reference: <Receiver port >
+psc.as.clust.recv.port=4000
+
+# Tomcat message receiver auto bind to port number
+# Tomcat property reference: <Receiver autoBind >
+psc.as.clust.recv.autobind=100
+
+# Tomcat cluster message receiver's timeout waiting for messages
+# Tomcat property reference: <Receiver selectorTimeout >
+psc.as.clust.recv.selectortimeout=5000
+
+# The number of threads used to receive messages from other cluster memebers
+# Tomcat property reference: <Receiver maxThreads >
+psc.as.clust.recv.maxthreads=6
+
+# The TCP nodelay option for receiving messages from other cluster members
+# Tomcat property reference: <Receiver tcpNoDelay >
+psc.as.clust.recv.nodelay=true
+
+# The message receive timeout for other cluster members
+# Tomcat property reference: <Receiver timeout >
+psc.as.clust.recv.timeout=3000
+
+#
+# common http/https/ajp13 message controls
+
+# The maximum time to wait for async messages to complete
+# Tomcat property reference: <Connector asyncTimeout    >
+psc.as.msg.timeout=10000
+
+# The maximum size of a connect's POST message body
+# Tomcat property reference: <Connector maxPostSize >
+psc.as.msg.maxpostsize=2097152
+
+# The maximum number of pipelined HTTP keepalive requests before the
+# TCP socket to the client is closed
+# Tomcat property reference: <Connector maxKeepAliveRequests >
+psc.as.msg.maxpipeline=100
+
+# The maximum size of the output HTTP response buffer
+# Tomcat property reference: <Connector socketBuffer >
+psc.as.msg.socketbuffer=9000
+
+# Enable SSL client authentication by the HTTPS connector
+# Values include { true | false | want }
+# Tomcat property reference: <Connector clientAuth >
+psc.as.https.clientauth=false
+
+# Pass the tomcat authenticated user id or parent authenticated 
+# user id to the web application
+# Tomcat property reference: <Connector clientAuth >
+psc.as.ajp13.tomcatauth=true
+
+# Maximum HTTP connector message queue size
+# Tomcat property reference: <Connector acceptCount    >
+psc.as.http.maxqueuesize=100
+
+# Maximum HTTPS connector message queue size
+# Tomcat property reference: <Connector acceptCount    >
+psc.as.https.maxqueuesize=100
+
+# Maximum AJP13 connector message queue size
+# Tomcat property reference: <Connector acceptCount    >
+psc.as.ajp13.maxqueuesize=100
+
+# 
+# Maximum TCP socket connections per HTTP connector
+# Tomcat property reference: <Connector maxConnections >
+psc.as.http.maxconnections=-1
+
+# Maximum TCP socket connections per HTTPS connector
+# Tomcat property reference: <Connector maxConnections >
+psc.as.https.maxconnections=-1
+
+# Maximum TCP socket connections per AJP13 connector
+# Tomcat property reference: <Connector maxConnections >
+psc.as.ajp13.maxconnections=-1
+
+# JMX Remote properties for Tomcat JMX Lifecycle Listener
+
+# TCP port number used for the RMI registry for the server's
+# JMX MBeans
+psc.as.jmxregistry.port=10001
+
+# TCP port number used to access the JMX/RMI server and access
+# the server's JMX MBeans
+psc.as.jmxserver.port=10002
+
+# Enable GZIP compression for HTTP transports {off|on}
+psc.as.http.compress=on
+#
+# Enable GZIP compression for HTTPS transports {off|on}
+psc.as.https.compress=on
+
+# The minimum size of message that will be compressed, in bytes.  Applies
+# to both HTTPS and HTTP transports
+psc.as.compress.min=2048
+
+# Only compress these MIME types (comma separated list.  Applies
+# to both HTTPS and HTTP transports)
+psc.as.compress.types=text/html,text/xml,text/javascript,text/css,application/json
+
+# Lockout Realm will log when it removes a lockout cache entry before 
+# this time limit is reached (in seconds)
+psc.as.realm.removeWarningTime=3600
+
+# Lockout Realm will maintain a cache of locked out users of this size
+psc.as.realm.cacheSize=1000
+
+# Lockout Realm will lock out a user account after this many failed login attempts
+psc.as.realm.failureCount=5
+
+# Lockout Realm will keep a user account locked out for this many seconds
+# after before it will accept another login attempt
+psc.as.realm.lockOutTime=300
+
+# Log the command line arguments passed to Java when Tomcat is started
+psc.as.versionlogger.logargs=true
+
+# Log the current environment variables when Tomcat starts
+psc.as.versionlogger.logenv=false
+
+# Log the current Java system properties when Tomcat starts
+psc.as.versionlogger.logprops=false

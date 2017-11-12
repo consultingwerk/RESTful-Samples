@@ -1,0 +1,375 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--WSAD Schema for OpenEdge 10.0b-->
+<xs:schema targetNamespace="urn:schemas-progress-com:WSAD:0004" xmlns:wsad="urn:schemas-progress-com:WSAD:0004" xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified" version="4">
+	<xs:element name="WSAD" type="wsad:WSADType">
+		<xs:annotation>
+			<xs:documentation>Declares a WSAD file</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="DeploymentWizard" type="wsad:DWGenInfoType">
+		<xs:annotation>
+			<xs:documentation>Stand alone Deployment Wizard info</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="ApplicationRuntimeProperties" type="wsad:AppRuntimePropsType" nillable="true">
+		<xs:annotation>
+			<xs:documentation>Stand-alone AppRuntimeProps info</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="AppContainer" type="wsad:AppContainerType">
+		<xs:annotation>
+			<xs:documentation>Stand-alone Web Service Description</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="PGMetaDataType">
+		<xs:annotation>
+			<xs:documentation>Defines the PGMetaData object</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="FieldName" type="xs:token"/>
+			<xs:element name="Type" type="xs:int"/>
+			<xs:element name="Extent" type="xs:int"/>
+			<xs:element name="TypeName" type="xs:token"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PGParamType">
+		<xs:annotation>
+			<xs:documentation>Defines the PGParam object</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Name" type="xs:token"/>
+			<xs:element name="OrigName" type="xs:token"/>
+			<xs:element name="Type" type="xs:short"/>
+			<xs:element name="Mode" type="xs:short"/>
+			<xs:element name="Extent" type="xs:int" minOccurs="0"/>
+			<xs:element name="MetaData" type="wsad:PGMetaDataType" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="allowUnknown" type="xs:boolean" use="required"/>
+		<xs:attribute name="ordinal" type="xs:short" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="PGMethodDetailType">
+		<xs:annotation>
+			<xs:documentation>Defines the PGMethodDetail object</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Name" type="xs:token"/>
+			<xs:element name="HelpString" type="xs:string" nillable="true" minOccurs="0"/>
+			<xs:element name="ODLHelpString" type="xs:string" nillable="true" minOccurs="0"/>
+			<xs:element name="ReturnValue" type="wsad:PGParamType" nillable="true" minOccurs="0"/>
+			<xs:element name="Parameter" type="wsad:PGParamType" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="isCustomized" type="xs:boolean" use="required"/>
+		<xs:attribute name="usesUnknownDefault" type="xs:boolean" use="required"/>
+		<xs:attribute name="useRetVal" type="xs:boolean" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="PGMethodType">
+		<xs:annotation>
+			<xs:documentation>Defines the PGMethod object</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Name" type="xs:token"/>
+			<xs:element name="ProcType">
+				<xs:simpleType>
+					<xs:restriction base="xs:short">
+						<xs:enumeration value="1"/>
+						<xs:enumeration value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="MethodDetail" type="wsad:PGMethodDetailType" minOccurs="0"/>
+		</xs:sequence>
+		<xs:attribute name="isExcluded" type="xs:boolean" use="required"/>
+		<xs:attribute name="hasBadParams" type="xs:boolean" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="PGProcDetailType">
+		<xs:annotation>
+			<xs:documentation>Defines the PGProcDetail object</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Name" type="xs:token"/>
+			<xs:element name="HelpString" type="xs:string" minOccurs="0"/>
+			<xs:element name="ODLHelpString" type="xs:string" minOccurs="0"/>
+			<xs:element name="ReturnValue" type="wsad:PGParamType" minOccurs="0"/>
+			<xs:element name="Parameter" type="wsad:PGParamType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="InternalProc" type="wsad:PGMethodType" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="usesUnknownDefault" type="xs:boolean" use="required"/>
+		<xs:attribute name="isCustomized" type="xs:boolean" use="required"/>
+		<xs:attribute name="useRetVal" type="xs:boolean" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="PGProcType">
+		<xs:annotation>
+			<xs:documentation>Defines the PGProc object</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Name" type="xs:token"/>
+			<xs:element name="ProcPath" type="xs:string"/>
+			<xs:element name="ProPath" type="xs:string"/>
+			<xs:element name="ProcExt" type="xs:token"/>
+			<xs:element name="ProcDetail" type="wsad:PGProcDetailType" minOccurs="0"/>
+		</xs:sequence>
+		<xs:attribute name="isPersistent" type="xs:boolean" use="required"/>
+		<xs:attribute name="useFullName" type="xs:boolean" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="PGAppObjType">
+		<xs:annotation>
+			<xs:documentation>Defines the PGAppObj object</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="PGVersion" type="wsad:PGVersionType" minOccurs="0"/>
+			<xs:element name="PGGenInfo" type="wsad:PGGenInfoType" minOccurs="0"/>
+			<xs:element name="DeploymentWizard" type="wsad:DWGenInfoType" minOccurs="0"/>
+			<xs:element name="Name" type="xs:token"/>
+			<xs:element name="ProPath" type="xs:string"/>
+			<xs:element name="HelpString" type="xs:string" minOccurs="0"/>
+			<xs:element name="ODLHelpString" type="xs:string" minOccurs="0"/>
+			<xs:element name="ObjectType" type="xs:boolean"/>
+			<xs:element name="AllowUnknown" type="xs:boolean"/>
+			<xs:element name="SubAppObject" type="wsad:PGAppObjType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Procedure" type="wsad:PGProcType" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="WSDLGenInfoType">
+		<xs:annotation>
+			<xs:documentation>Defines the WSDLGenInfo object</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Style">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="RPCEncoded"/>
+						<xs:enumeration value="RPCLiteral"/>
+						<xs:enumeration value="DocLiteral"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="SchemaNamespace" type="xs:anyURI"/>
+			<xs:element name="DataTypeNamespace" type="xs:anyURI"/>
+			<xs:element name="SoapNamespace" type="xs:anyURI"/>
+			<xs:element name="SoapEncodingNamespace" type="xs:anyURI"/>
+			<xs:element name="DefaultNamespace" type="xs:anyURI"/>
+			<xs:element name="WSDLNamespace" type="xs:anyURI"/>
+			<xs:element name="SchemaPrefixCtr" type="xs:int"/>
+			<xs:element name="MessagePrefix" type="xs:string"/>
+			<xs:element name="TypePrefix">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string"/>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="testWSDL" type="xs:boolean" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="PGGenInfoType">
+		<xs:annotation>
+			<xs:documentation>Defines the PGGenInfo object</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Author" type="xs:string"/>
+			<xs:element name="VersionString" type="xs:string"/>
+			<xs:element name="VersionNumber">
+				<xs:simpleType>
+					<xs:restriction base="xs:short">
+						<xs:minInclusive value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="Package" type="xs:string" nillable="true"/>
+			<xs:element name="Service" type="xs:string" nillable="true"/>
+			<xs:element name="WorkDir" type="xs:string"/>
+			<xs:element name="VerboseLogging" type="xs:boolean"/>
+			<xs:element name="SaveBeforeGen" type="xs:boolean"/>
+			<xs:element name="DotNetClient" type="xs:boolean" minOccurs="0"/>
+			<xs:element name="JavaClient" type="xs:boolean"/>
+			<xs:element name="WebServicesClient" type="xs:boolean"/>
+			<xs:element name="UserDefinedAppService" type="xs:boolean"/>
+			<xs:element name="JavaCompilerType">
+				<xs:simpleType>
+					<xs:restriction base="xs:short">
+						<xs:minInclusive value="1"/>
+						<xs:maxInclusive value="3"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="JavaCompiler" type="xs:string"/>
+			<xs:element name="JavaSwitches" type="xs:string" nillable="true"/>
+			<xs:element name="JavaClasspathSwitch" type="xs:string"/>
+			<xs:element name="JavaClasspath" type="xs:string"/>
+			<xs:element name="DotNetCompilerType" type="xs:short" minOccurs="0"/>
+			<xs:element name="DotNetCompiler" type="xs:string" minOccurs="0"/>
+			<xs:element name="DotNetSwitches" type="xs:string" minOccurs="0"/>
+			<xs:element name="DotNetXSDGenerator" type="xs:string" minOccurs="0"/>
+			<xs:element name="DotNetNamespace" type="xs:string" minOccurs="0"/>
+			<xs:element name="DotNetTitle" type="xs:string" minOccurs="0"/>
+			<xs:element name="DotNetVersion" type="xs:string" minOccurs="0"/>
+			<xs:element name="DotNetDesc" type="xs:string" minOccurs="0"/>
+			<xs:element name="DotNetCompany" type="xs:string" minOccurs="0"/>
+			<xs:element name="DotNetProduct" type="xs:string" minOccurs="0"/>
+			<xs:element name="DotNetPublicKey" type="xs:string" minOccurs="0"/>
+			<xs:element name="DotNetDelaySign" type="xs:boolean" minOccurs="0"/>
+			<xs:element name="DotNetStrongNamedRuntime" type="xs:boolean" minOccurs="0"/>
+		</xs:sequence>
+		<xs:attribute name="isSessionFree" type="xs:boolean" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="DWGenInfoType">
+		<xs:annotation>
+			<xs:documentation>Defines the DWGenInfo object</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="CurrentEncoding">
+				<xs:simpleType>
+					<xs:restriction base="xs:short">
+						<xs:minInclusive value="1"/>
+						<xs:maxInclusive value="3"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="SoapEndpointURL" type="xs:anyURI"/>
+			<xs:element name="WebServiceNamespace">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:anyURI">
+							<xs:attribute name="userDefined" type="xs:boolean" use="required"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="SoapAction">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:anyURI">
+							<xs:attribute name="appendToSoapAction" type="xs:boolean" use="required"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="TestWSDL">
+				<xs:complexType>
+					<xs:attribute name="RPCEncoded" type="xs:boolean" use="required"/>
+					<xs:attribute name="RPCLiteral" type="xs:boolean" use="required"/>
+					<xs:attribute name="DocLiteral" type="xs:boolean" use="required"/>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="AppRuntimePropsType">
+		<xs:annotation>
+			<xs:documentation>Defines the AppRuntimeProps class</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="runtimePropertyVersion" type="xs:unsignedInt"/>
+			<xs:element name="appServiceProtocol" type="xs:string"/>
+			<xs:element name="appServiceHost" type="xs:string"/>
+			<xs:element name="appServicePort">
+				<xs:simpleType>
+					<xs:restriction base="xs:unsignedShort">
+						<xs:minExclusive value="0"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="appServiceName" type="xs:string"/>
+			<xs:element name="staleO4GLObjectTimeout">
+				<xs:simpleType>
+					<xs:restriction base="xs:long">
+						<xs:minInclusive value="0"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="minSessions" type="xs:unsignedShort"/>
+			<xs:element name="maxSessions" type="xs:unsignedShort"/>
+			<xs:element name="initialSessions" type="xs:unsignedShort"/>
+			<xs:element name="idleSessionTimeout">
+				<xs:simpleType>
+					<xs:restriction base="xs:long">
+						<xs:minInclusive value="0"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="requestWaitTimeout">
+				<xs:simpleType>
+					<xs:restriction base="xs:integer">
+						<xs:minInclusive value="-1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="nsClientMinPort" type="xs:unsignedShort"/>
+			<xs:element name="nsClientMaxPort" type="xs:unsignedShort"/>
+			<xs:element name="nsClientPortRetry" type="xs:unsignedByte"/>
+			<xs:element name="nsClientPortRetryInterval" type="xs:unsignedShort"/>
+			<xs:element name="nsClientPicklistSize" type="xs:unsignedByte"/>
+			<xs:element name="nsClientPicklistExpiration" type="xs:unsignedInt"/>
+			<xs:element name="serviceAvailable">
+				<xs:simpleType>
+					<xs:restriction base="xs:unsignedByte">
+						<xs:minInclusive value="0"/>
+						<xs:maxInclusive value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="serviceLoggingLevel" type="xs:unsignedInt"/>
+			<xs:element name="serviceLoggingEntryTypes" type="xs:string"/>
+			<xs:element name="appServiceConnectionMode" type="xs:unsignedByte"/>
+			<xs:element name="serviceFaultLevel">
+				<xs:simpleType>
+					<xs:restriction base="xs:unsignedByte">
+						<xs:minInclusive value="2"/>
+						<xs:maxInclusive value="3"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="waitIfBusy">
+				<xs:simpleType>
+					<xs:restriction base="xs:unsignedByte">
+						<xs:minInclusive value="0"/>
+						<xs:maxInclusive value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="connectionLifetime" type="xs:unsignedInt"/>
+			<xs:element name="minIdleConnections" type="xs:unsignedShort"/>
+			<xs:element name="noHostVerify">
+				<xs:simpleType>
+					<xs:restriction base="xs:unsignedByte">
+						<xs:minInclusive value="0"/>
+						<xs:maxInclusive value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="noSessionReuse">
+				<xs:simpleType>
+					<xs:restriction base="xs:unsignedByte">
+						<xs:minInclusive value="0"/>
+						<xs:maxInclusive value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="WSADType">
+		<xs:annotation>
+			<xs:documentation>Defines a WSM/WSAD File</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="AppObject" type="wsad:PGAppObjType"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="AppContainerType">
+		<xs:annotation>
+			<xs:documentation>Defines a WSD file. Used for import and export</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="FriendlyName" type="xs:string" nillable="true"/>
+			<xs:element ref="wsad:ApplicationRuntimeProperties"/>
+			<xs:element ref="wsad:WSAD"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PGVersionType">
+		<xs:annotation>
+			<xs:documentation>Contains version info for XPXG files</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="PXGVersion" type="xs:positiveInteger"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

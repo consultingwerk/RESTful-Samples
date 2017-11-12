@@ -1,0 +1,55 @@
+# The appserver.properties file contains name-value Java properites used by
+# the Progress Application Server (PAS) and web applications.
+# Each non blank and non comment line will be defined as a java system property
+# by prepending a '-D' and passed on the command line to the JVM via the
+# JAVA_OPTS environment variable.
+#
+# Comment lines may be used by placing a pound signe (#) in column zero.  Trailing
+# comments are not supported.
+# You may use shell environment variable substitution using the form ${env-var-name} 
+
+# The Major, minor, and patch release version of the Progress Application Server version 
+psc.as.version=M.m.p
+
+# The type of PAS: a full Apache-Tomcat install or an instance {standard|instance}
+psc.as.type=standard
+
+# The installation OS type the PAS was tailored for : {windows|unix}
+psc.as.os=os-type
+
+# The PAS installation personality type {appserver|tokenserver}
+# Determines if the PAS server is performing as an AppServer, or is performing as a
+# token server as part of the OpenEdge Authentication Gateway product
+psc.as.personality=appserver
+
+# The user friendly 'alias' name that refers to an Apache-Tomcat instance, which can
+# be used by external tcman administration tools.  If not specified
+# the instance name is the CATALINA_BASE's directory name "home"
+psc.as.alias=alias-name
+
+# The optional directory path of an Apache-Tomcat instance's parent to track where
+# the server's home libraries and utilities are obtained from
+psc.as.parent=""
+
+# The security model for the core Apache-Tomcat server & it instances 
+# by the tailoring utility and thereafter propogated by the tcman utility 
+# {default|developer|production}
+psc.as.security.model=security-model
+
+# An indicator that the instance is registered as a Windows
+# service
+# {true|false}
+psc.as.service=true/false
+
+# Optional JMX access used by the JVM process
+
+# The file where the password for remote JMX port is stored.
+com.sun.management.jmxremote.password.file="${CATALINA_BASE}/conf/jmxremote.password"
+
+# The JMX remote access control file location for the remote JMX port
+com.sun.management.jmxremote.access.file="${CATALINA_BASE}/conf/jmxremote.access"
+
+# The JMX port's use of SSL
+com.sun.management.jmxremote.ssl="false"
+
+

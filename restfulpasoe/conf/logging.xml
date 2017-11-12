@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<configuration debug="false" scan="true" scanPeriod="5 seconds" >
+  <appender name="SIFT" class="ch.qos.logback.classic.sift.SiftingAppender">
+    <discriminator class="ch.qos.logback.classic.sift.JNDIBasedContextDiscriminator">
+      <defaultValue>unknown</defaultValue>
+    </discriminator>
+    <sift>
+      <appender name="FILE-${contextName}" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <append>true</append> 
+        <prudent>true</prudent>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+          <fileNamePattern>${catalina.base}/logs/${contextName}.%d{yyyy-MM-dd}.log</fileNamePattern> 
+        </rollingPolicy>
+        <encoder>
+          <!-- add the timestamp as milliseconds to facilitate logfile post processing     -->
+          <!--                                                                             -->
+          <!-- <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern> -->
+          <pattern>%d{HH:mm:ss.SSS}/%r [%thread] %-5level %logger{36} - %msg%n</pattern>
+          <!--                                                                             -->
+        </encoder>
+      </appender>
+    </sift>
+  </appender>
+
+<!-- This is a centralized pasoe logging configuration. It currently affects only Apache CXF framework logging service.
+     It allows to control the logging based on:
+
+     a) Java pakage name : by package name, inclusive of all classes in all sub-packages
+     b) A single Java class : by fully qualified Java class name
+
+     As seen below, the format for logging service configuration entry
+     <logger name="{package-name|class-path}" level="{level}" />
+
+     The logging levels are specified in upper-case and are, in order of verbosity :
+        ERROR (least information)
+        WARN
+        INFO
+        DEBUG
+        TRACE (most information)
+
+     The logging configuration provided in this file represents a portion of the
+     full LogBack functionality.  Please refer to the LogBack reference documentation 
+     for more advanced configurations not found in this configuration.
+
+
+-->
+  <!-- Apache CXF adapter -->
+  <logger name="org.apache.cxf" level="ERROR"/>
+
+  <!-- The default class/package logging level if a specific class/package is not uncommented and explicitly
+       set using the above definitions.   This can generate HUGE amounts of log file data, but is
+       useful when you don't know where to being looking. -->
+  <root level="WARN">
+    <appender-ref ref="SIFT" /> 
+  </root>
+</configuration>
+

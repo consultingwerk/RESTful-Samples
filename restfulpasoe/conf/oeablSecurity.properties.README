@@ -1,0 +1,1496 @@
+ 
+ ##########################################################################
+ ##                                                                      ##
+ ## Copyright (c) 2016 by Progress Software Corporation                  ##
+ ##                                                                      ##
+ ## All rights reserved.  No part of this program or document may be     ##
+ ## reproduced in any form or by any means without permission in writing ##
+ ## from Progress Software Corporation.                                  ##
+ ##                                                                      ##
+ ##########################################################################
+ #
+ # Spring Security bean properties definition file for all oeabl.war based
+ # web applications found in a PASOE instance. The properties values found 
+ # in this file constitute the full set of Spring Security configuration 
+ # properties and their values.
+ #
+ # Hierarchy of .properties files:
+ # PAS for OE resolves property settings by loading multiple .properties 
+ # files and by using the first declared value it finds.  The .properties 
+ # files are loaded in this order:
+ #
+ #     1) webapps/<web-app-name>/WEB-INF/oeablSecurity.properties
+ #        In this file, declare the properties and value that are web 
+ #        application specific and override the properties defined in the 
+ #        PAS for OE /conf and ablapps/<abl-app-name> property files.
+ #
+ #     2) ablapps/<abl-app-name>/oeablSecurity.properties
+ #        In this file, declare ABL business application specific  
+ #        properties and values that will will override any settings in 
+ #        the /conf properties files.  
+ # 
+ #        Note: ablapps/<abl-app-name>/oeablSecurity.properties is optional 
+ #        and will not produce an error if it is not present.
+ #        Also note that the default ABL business web application name 
+ #        generated on creation of a PAS for OE instance is the same as 
+ #        the instance's alias name.
+ #
+ #     3) conf/oeablSecurity.properties
+ #        In this file, declare the properties and values that span 
+ #        all abl/web applications in the PAS for OE instance.
+ #
+ # PAS for OE must find at least one oeablSecurity.properties file in one
+ # of the locations listed above.
+ # 
+ # Specifying properties and values:
+ # The properties and their values follow the Java properties file format, 
+ # where each line contains a single property-name and property-value 
+ # separated by and equals-sign delimiter.  
+ #
+ #  Rules:
+ #  o Property values are generally set in hierarchical name-spaces,
+ #    where the outer-most parent space names precede child space names   
+ #    and spaces are delimited by a period. For example:
+ #
+ #      name=value
+ #
+ #      space1.name=value
+ #
+ #      space1.child1space.name=value
+ #      space1.child2space.name=value
+ #
+ #      space2.child1space.name=value
+ #      space2.child2space.name=value
+ #
+ #  o Any whitespace between beginning of line and the first character, 
+ #    and between the last character and the equals-sign delimiter is 
+ #    ignored.
+ #
+ #  o Names may NOT have embedded whitespace between the first and last 
+ #    characters of the name.
+ #
+ #  o Names are CASE-SENSITIVE, per the Spring Security definition.
+ # 
+ #  o Names must be unique.
+ #
+ #  o Property-value types may be: { String | boolean | integer }
+ #
+ #    String property-values: 
+ #    o May be blank, signified by a carriage control after the equals-sign 
+ #      delimiter.
+ #
+ #    o May have a value that begins with the character following the equals-sign
+ #      delimiter and extending to the line termination carriage-control.
+ #
+ #    o May not include double-quote or single-quote characters, unless otherwise
+ #      specified in the property description.
+ #
+ #    o Some may contain comma separated values.  Refer the to property  
+ #      description.
+ #
+ #    o Most properties are case-sensitive unless otherwise specified in the
+ #      property-name description
+ #
+ #    Boolean property values:
+ #    o May have a value of { true | false }. 
+ #
+ #    o May not use O/1, yes/no, or other boolean forms.  
+ #
+ #    o Must have a value.
+ #
+ #    o May not be enclosed in single or double quotation characters.
+ #
+ #    Integer property values:
+ #    o May be positive, negative, or zero, as specified by their 
+ #      property-name description.
+ #
+ #    o Must have a value.
+ #
+ #    o May not be enclosed in single or double quotation marks.
+ #
+ #  Property-values may be recursively 'mapped' to another property. This 
+ #  provides the ability to configure various components individually
+ #  and yet make it easier to set them all using one property.  To map a
+ #  property-value to another property's value, refer to the property-name 
+ #  whose value is to be used by enclosing llike this: ${<property-name>}
+ #  For example:
+ #      component.all=value1
+ #          ...
+ #      component1=${component.all}
+ #      component2=${component.all}
+ #
+ #  The resulting property values are:
+ #      component1=value1
+ #      component2=value1
+ #
+ # The convention for sections in this file is:
+ #
+ ############################### Descriptions ##############################
+ # Properties and their valid values are described below. They are grouped
+ # according to functional areas and described using the following format:
+ #
+ #  <property-name>: <description of values>
+ #  <additional-description>
+ #  [default-value]
+ ##########################################################################
+ ##
+ ##%% version 0001
+ ##%% Mar 02, 2016 2:29:12 PM
+ 
+################## Security and authentication models #########################
+## These properties define the core security processes and client authentication
+## processes used in every Spring Security configuration except 'anonymous'.
+## These properties are the minimum required properties that must be configured
+## for Spring Security to operate.
+###############################################################################
+
+http.all.authmanager: String value {local|extlocal|ldap|ad|oerealm} 
+ Specifies the source of user accounts used to validate user authentication   
+ credentials. Ignored when the client.login.model is {anonymous|sso|container}
+ Applies to all oeabl protocol transports (apsv,soap,rest,web,static-file)
+ [local]
+
+client.login.model: String value {anonymous|basic|form|container|sso}
+ Specifies which Spring Security client security [login] process to select and
+ execute at run-time.  
+ [anonymous]
+
+################## J2EE Tomcat Realm Role mapping #############################
+## These properties are used in the containerLoginModel.xml configuration.  It
+## provides a comma-separated (no whitespaces) list of Role names supplied
+## by the Tomcat realm login token that will be passed through to Spring's
+## URL authorization.
+##
+## Each PAS for OE transport and default URI space has its own settable
+## list. The property http.jee.all.mappableRoles can be used to set all
+## transports and defaults at one time.
+##
+###############################################################################
+
+http.jee.all.mappableRoles: Comma separated list of case-sensitive string 
+ values that will be used to determine which Roles a Spring user token will
+ contain and used for URL access.  
+ [ROLE_PSCUser]
+
+http.jee.apsv.mappableRoles: Mapped Role names specific to the APSV transport
+ [${http.jee.all.mappableRoles}]
+
+http.jee.soap.mappableRoles: Mapped Role names specific to the SOAP transport
+ [${http.jee.all.mappableRoles}]
+
+http.jee.rest.mappableRoles: Mapped Role names specific to the REST transport
+ [${http.jee.all.mappableRoles}]
+
+http.jee.web.mappableRoles: Mapped Role names specific to the WEB transport
+ [${http.jee.all.mappableRoles}]
+
+http.jee.mappableRoles: Mapped Role names specific to the static-file transport
+ [${http.jee.all.mappableRoles}]
+
+
+################# APSV Transport Specific Properties ############################
+## For APSV Transport authentication and authorization. It is disabled by default 
+## i.e. apsv.security.enable=none. 
+#################################################################################
+
+http.apsv.authmanager: String holding the user account facility used to 
+ authenticate user accounts
+ [${http.all.authmanager}]
+
+http.apsv.realm: String value holding the BASIC authentication Realm name
+ returned to the client after an authentication failure.
+ [${http.all.realm}]
+
+apsv.security.enable: String value { none | basic } that will load the
+ Spring Security authentication process to use in validating clients
+ [none]
+ 
+ 
+################# SOAP Transport Specific property ##############################
+## For SOAP Transport authentication and authorization. It is disabled by default 
+## i.e. apsv.security.enable=none. 
+##
+## If there is a requirement to enable this in production, then set 
+## soap.security.enable property value as "basic".
+##    Example: soap.security.enable=basic
+##
+## The http.soap.authprovider property is used to configure the authentication
+## manager as per production need.  
+###############################################################################
+
+http.soap.authmanager: String value holding the user account facility used to 
+ authenticate user accounts
+ [${http.all.authmanager}]
+
+http.soap.realm: String value holding the BASIC authentication Realm name
+ returned to the client after an authentication failure.
+ [${http.all.realm}]
+
+soap.security.enable: String value { none | basic }
+ Loads the Spring Security authentication process to use in validating clients.
+ [none]
+ 
+################# REST Transport Specific property ############################
+## The http.rest.authprovider property is used to configure the authentication 
+## manager per production need.  
+###############################################################################
+
+http.rest.authmanager: String holding the user account facility used to 
+ authenticate user accounts
+ [${http.all.authmanager}]
+
+http.rest.realm: String value holding the BASIC authentication Realm name
+ returned to the client after an authentication failure.
+ [${http.all.realm}]
+
+ 
+################# WEB Transport Specific property #############################
+## The http.web.authprovider property is used to configure the authentication 
+## manager as per production need.  
+###############################################################################
+
+http.web.authmanager: String holding the user account facility used to 
+ authenticate user accounts
+ [${http.all.authmanager}]
+
+http.web.realm: String value holding the BASIC authentication Realm name
+ returned to the client after an authentication failure.
+ [${http.all.realm}]
+
+
+############### Authentication provider for public /** URI space ##############
+## <http pattern="/**" .../>
+## The http.authprovider property is used to configure the authentication 
+## manager as per production need.  
+###############################################################################
+
+http.authmanager: String holding the user account facility used to 
+ authenticate user accounts
+ [${http.all.authmanager}]
+
+http.realm: String value holding the BASIC authentication Realm name
+ returned to the client after an authentication failure.
+ [${http.all.realm}]
+
+ 
+############# OEMetaDataSource Configuration ##################################
+## This common set of properties applies to the OEMetadataSource bean
+## that loads intercept-url configurations from a .CSV file.  
+###############################################################################
+
+oemetadatasource.all.requestmatcher: String value { ant | regex }
+  Specifies pattern matcher for processing wild-card directories and files in 
+  URL access control 'intercept-url' rules.
+  [ant]
+
+oemetadatasource.all.csvpath: The String file path that specifies the CSV
+  file containing 'intercept-url' rules used to grant/deny access to a web
+  application resource.  The file path name is a relative path beginning
+  at the web application root.
+  [WEB-INF/oeablSecurity.csv]
+
+
+############# Default Filter Configuration ####################################
+## This is the common section for all the transports(apsv,soap,rest,web) to 
+## configure common filter beans like [pre-auth,ClientPrinciple & Cors] 
+## based upon the selected spring security.
+##
+## Bean properties naming should follow the format "<bean-id>.<prop-name>=value"
+###############################################################################
+ 
+############# Form login Filter bean ##########################################
+http.formlogin.loginpage=/static/auth/login.jsp
+http.formlogin.loginurl=/static/auth/j_spring_security_check
+http.formlogin.usedefaulttarget=false
+http.formlogin.defaulturl=/
+http.formlogin.failureurl=/static/auth/loginfail.html
+http.formlogin.usernamefield=j_username
+http.formlogin.userpasswordfield=j_password
+
+############# Logout Filter bean ##############################################
+http.logout.url=/static/auth/j_spring_security_logout
+http.logout.invalidate=true
+http.logout.deletecookie=JSESSIONID
+
+
+############# Rollbase SSO Filter #############################################
+## Authentication filter used for Rollbase SSO integration, where Rollbase
+## produces a SSO token that it sends to OpenEdge in a custom HTTP header field.
+## The filter decodes and validates the SSO token and creates a 
+## Client-Principal filter that is delivered to the ABL business application 
+## code.
+##
+## By default this filter is disabled, if any user is already authenticated or 
+## authorized by Rollbase then it skips all the authentication configurations 
+## and directly accesses the OpenEdge services after validation
+##
+##  To turn on Rollbase SSO :
+##    1. Set "enabled" property to true 
+##    2. For single-domain supply the Domain Access Code as the value for 
+##       "key" property 
+##	   3. For multi-domain supply the absolute path of a 'registryFile' 
+##       generated using OpenEdge's $DLC/bin/gendomreg.bat utility as 
+##       "registryFile" property
+ 
+OEPreauthfilter.enabled: Boolean value that enables/disables allowing
+ Rollbase SSO to the OpenEdge service
+ [false]
+
+OEPreauthfilter.key: A clear-text String access-code used to validate
+ the Rollbase produced SSO token before it is accepted.  No value 
+ will result in using a -blank- access-code string value.  The key
+ property is used when Rollbase produces SSO tokens for a single
+ OpenEdge tenant.
+ []
+
+OEPreauthfilter.registryFile: The String file path of where to find and
+ load an OEDomain Registry file that holds multiple access-code values
+ for validating Rollbase produced SSO tokens.  Used when Rollbase 
+ produces SSO tokens for multiple OpenEdge tenants. Overrides the
+ property OEPreauthfilter.key.
+ []
+
+ 
+preauthAuthProvider.rolePrefix: A non-blank, case-sensitive string value 
+ that is used to prefix each Rollbase SSO token's role field name so
+ that it can be used in Spring Security's URL intercept-url access controls.
+ [ROLE_]
+
+preauthAuthProvider.enabledAttrName: A non-blank case-sensitive String name
+ used to query the Rollbase SSO token's account-enabled field and use it
+ to allow only enabled accounts access to the web service.
+ [ATTR_ENABLED]
+
+preauthAuthProvider.lockedAttrName: A non-blank case-sensitive String name
+ used to query the Rollbase SSO token's account-locked field and use it
+ to allow only enabled accounts access to the web service.
+ [ATTR_LOCKED]
+
+preauthAuthProvider.expiredAttrName: A non-blank case-sensitive String name
+ used to query the Rollbase SSO token's account-expired field and use it
+ to allow only enabled accounts access to the web service.
+ [ATTR_EXPIRED]
+
+
+############# OEClientPrincipalFilter bean #####################################
+## The OEClientPrincipalFilter bean turns a Spring token, holding the 
+## authenticated user's information, into an OpenEdge ClientPrincipal object. 
+## The filter is thus responsible for:
+##  1. Creating a ClientPrincipal object if one was not created in a previous 
+##     security process authentication step
+##  2. If the previous authentication process produced a Spring token, 
+##     copy that information into the ClientPrincipal
+##  3. If the ClientPrincipal is not already sealed, seal it using this 
+##     filter's domain and registry configuration
+##  4. If enablecp is true, send the ClientPrincipal to the ABL business 
+##     logic
+
+OEClientPrincipalFilter.enabled: A boolean value that enables/disables the
+ production and passing of a Client-Principal to the ABL business application.
+ [true]
+
+OEClientPrincipalFilter.key:  A case-sensitive String value that holds a 
+ single OpenEdge Domain's access-code.  That access-code string is used to
+ seal all ClientPrincpal objects this filter produces before it is passed
+ to the ABL business application.  The value may be blank, a clear-text 
+ (not recommended) value, or encoded value using the form oech1::<hex-binary>, 
+ where <hex-binary> is produced by the DLC/bin/genpassword utility.
+ []
+
+OEClientPrincipalFilter.registryFile: The String file path of where to 
+ find and load an OEDomain Registry file that holds multiple access-code 
+ values for validating Rollbase produced SSO tokens.  Used when Rollbase 
+ produces SSO tokens for multiple OpenEdge tenants. Overrides the
+ property OEClientPrincipalFilter.key.
+ []
+
+OEClientPrincipalFilter.domain: A case-insensitive String value that 
+ specifies the OpenEdge Domain name to append to the Spring Security
+ authenticated user-id in the event the user-id is not a fully qualified
+ OpenEdge user name.  A blank value will designate using the default
+ OpenEdge blank OE Domain name.
+ []
+
+OEClientPrincipalFilter.roles: An optional case-sensitive String value
+ holding a comma separated list of Spring Secuirty/ABL application Role 
+ names that will be inserted into a Client-Principal.  When blank no
+ additional Role information will be inserted into the Client-Principal
+ and all Roles used for Spring Security URL access controls and/or ABL
+ business application must come from the authenticated user's account
+ properties.
+ []
+
+OEClientPrincipalFilter.authz: A boolean value that when true will load
+ the Spring Security token's authorized Role list (obtained from the
+ authenticated user account's properties) into the Client-Principal's
+ Role attribute.
+ [true]
+
+OEClientPrincipalFilter.expires: An integer value that sets the Client-Princpal
+ object's expiration time.  The value range is 0 to n, where a 0 value
+ indicates no expiration will be set.
+ [0]
+
+OEClientPrincipalFilter.accntinfo: A boolean value that when true will
+ load the Spring Security token's account state information (i.e. enabled,
+ locked, expired,...) into the Client-Principal's properties.
+ [false]
+
+OEClientPrincipalFilter.ccid: A boolean value that when true will return
+ the authenticated user's HTTP [login] session id as an HTTP response
+ header.  The header will only be returned in an HTTP response at the
+ time a successful authentication has completed.  Note: Spring Security
+ controls all user login sessions and their IDs.  
+ [false]
+
+OEClientPrincipalFilter.anonymous: A boolean value that when true will
+ produced an unsealed Client-Principal object for the anonymous (i.e. 
+ unauthenticated) client and pass it to the ABL business application.
+ [false]
+
+OEClientPrincipalFilter.sealAnonymous: A boolean value that when true 
+ will add sealing a Client-Principal object produced when the 
+ OEClientPrincipalFilter.anonymous property is enabled.  This property
+ is ignored if OEClientPrincipalFilter.anonymous is disabled.
+ [false]
+
+OEClientPrincipalFilter.appName: A non-blank String value that is used as 
+ the OpenEdge Domain name when an unqualified client user name is authenticated
+ by Spring Security and is not dervived from the authenticated user's
+ Role list (see property OEClientPrincipalFilter.domainRoleFilter).  
+ [OE]
+
+OEClientPrincipalFilter.passthru: A boolean value that when true will generate
+ and pass to the ABL business application an unsealed Client-Principal object
+ that represents an unauthenticated client user name.  
+ [false]
+
+OEClientPrincipalFilter.domainRoleFilter: An optional String value that when
+ non-blank will be used to derive an OpenEdge Domain name to assign to a
+ Spring Security authenticated user.  Obtaining the OpenEdge Domain name is
+ only used when the authenticated client user-id is not already a fully 
+ qualified OpenEdge user name.  The value is a Java regular expression pattern
+ that is used to scan the authenticated user's granted Role names for a
+ match and extract the Role name substring that represents the OpenEdge
+ Domain name.  When the property is blank, authenticated user Role names
+ will not be used to obtain an OpenEdge Domain name.
+ []
+
+# Declare placeholders for up to 10 OEClientPrincipalFilter
+# properties.  Any number of properties larger than 10 
+# requires customization of authFilters.xml.
+#
+# Any property 'key' value whose first character is a
+# comment (#) is ignored when creating a Client-Principal
+# token.  The value may be blank or a case-sensitive
+# string, where any space appearing after the equals-sign
+# delimiter and before EOL is included.
+OEClientPrincipalFilter.properties.1.key=#doNotAdd
+OEClientPrincipalFilter.properties.1.value=
+
+OEClientPrincipalFilter.properties.2.key=#doNotAdd
+OEClientPrincipalFilter.properties.2.value=
+
+OEClientPrincipalFilter.properties.3.key=#doNotAdd
+OEClientPrincipalFilter.properties.3.value=
+
+OEClientPrincipalFilter.properties.4.key=#doNotAdd
+OEClientPrincipalFilter.properties.4.value=
+
+OEClientPrincipalFilter.properties.5.key=#doNotAdd
+OEClientPrincipalFilter.properties.5.value=
+
+OEClientPrincipalFilter.properties.6.key=#doNotAdd
+OEClientPrincipalFilter.properties.6.value=
+
+OEClientPrincipalFilter.properties.7.key=#doNotAdd
+OEClientPrincipalFilter.properties.7.value=
+
+OEClientPrincipalFilter.properties.8.key=#doNotAdd
+OEClientPrincipalFilter.properties.8.value=
+
+OEClientPrincipalFilter.properties.9.key=#doNotAdd
+OEClientPrincipalFilter.properties.9.value=
+
+OEClientPrincipalFilter.properties.10.key=#doNotAdd
+OEClientPrincipalFilter.properties.10.value=
+
+############# OECORSFilter bean ###############################################
+## OpenEdge's embeds a CORS filter into the Spring Security security process
+## so that it produces a smooth integrated environment, where configuration
+## and error results have commonality.
+##
+## Properties for the OECORSFilter Filter bean (see authFilters.xml)
+## cross site resource access by [JavaScript] http clients.
+
+OECORSFilter.responseHeaders: A non-blank comma-separated list of String values
+ that are returned to the application client so that the CLIENT may filter out
+ which HTTP response headers may be accessed. Note: do not use embedded 
+ white-spaces. Enforcement is performed in the client application.
+ [Cache-Control,Content-Language,Content-Type,Expires,Last-Modified,Pragma,X-CLIENT-CONTEXT-ID]
+
+OECORSFilter.allowAll: A boolean value that when true allows all HTTP 
+ clients to access the service without negotiating a CORS request (i.e. 
+ supplying HTTP request headers that indicate who the client is and what
+ they may do).  A false setting requires ALL HTTP clients to negotiate
+ CORS requests.  
+ [true]
+
+OECORSFilter.allowDomains: A comma-separated list of HTTP/HTTPS url names that
+ are allowed to use this web service when negotiating a CORS request.  A
+ blank value will use the CORS standard's '*' for allowing all HTTP/HTTPS 
+ clients.  When non-blank, the list contains case-insensitive values:
+    {http|https}://<host>[:port]
+ Do NOT use wildcard characters.
+ Enforcement is performed in the client application.
+ []
+
+OECORSFilter.allowSubdomains: A boolean value that when true allows
+ subdomains of the OECORSFilter.allowDomains property to have access.
+ [false]
+
+OECORSFilter.allowMethods: A non-blank, comma-separated, case-insensitive, 
+ list of string values that represents the HTTP methods a client application 
+ is allowed to use in an HTTP request.  Note: embedded white-space is not 
+ allowed.
+ Enforcement is performed in the client application.
+ [GET,POST,PUT,DELETE,OPTIONS,PATCH]
+
+OECORSFilter.messageHeaders: A non-blank, case-insensitive, list of string 
+ values that represent the HTTP request header names the client application is
+ allowed to include in an HTTP request.  Note:  embedded white-space is not
+ allowed.
+ Enforcement is performed in the client application.
+ [Accept,Accept-Language,Content-Language,Content-Type,X-CLIENT-CONTEXT-ID,Origin,Access-Control-Request-Headers,Access-Control-Request-Method,Pragma,Cache-control,Authorization]
+
+OECORSFilter.supportCredentials: A boolean value that when true will signal
+ a HTTP client that it is allowed to pass user credentials to the server
+ when constructing an HTTP request.
+ Enforcement is performed in the client application.
+ [true]
+
+OECORSFilter.maxAge: An non-zero integer value that indicates the time that
+ a pre-flight CORS negotiation between a client and server may pass before
+ a new negotiation is required by the client application.  A -1 value will
+ disable time expirations and a value greater-than zero indicates the number of
+ seconds that may pass before the CORS negotiation expires.
+ [-1]
+
+
+############# OpenEdge SSO support ############################################
+## Common OpenEdge SSO Producer and Consumer properties that apply to all
+## Spring Security bean components that comprise the OpenEdge SSO support
+## (see properties for OESSOTokenManager, OESSOFilter, OESSORefreshFilter )
+
+OESSO.error.detail: An positive integer value { 0|1|2 } 
+ Specifies the amount of error information returned in an error response message's
+ JSON payload.  The valid values are:
+    0   no information useful to hackers
+    1   minimal information useful to hackers
+    2   debug level information very useful to hackers
+ [0]
+
+OESSO.require.https: A boolean value that when true requires SSO 
+ authentication, refresh, and service access requests to use HTTPS network
+ encryption to safeguard the SSO token from theft and use in attacks on
+ the service.
+ [true]
+ 
+## Properties for the OEAuthnSuccessHandler bean (see authFilters.xml)
+## The OEAuthnSuccessHandler bean interfaces with the OE ClientPrincipal SSO 
+## token producer OESSOTokenManager after a successfull user login.  The 
+## OESSOTokenManager produces a sealed OECP token that is returned to the
+## client in the body of the HTTP response.
+##
+OEAuthnSuccessHandler.tokenErrorDetail: The amount of error detail to return
+ to the client if a user is successfully authenticated, but an error occurs
+ in creating the OpenEdge SSO token.   See OESSO.error.detail
+ [${OESSO.error.detail}]
+
+OEAuthnSuccessHandler.tokenSecure: See OESSO.require.https
+ [${OESSO.require.https}]
+
+## Properties for the OEAuthnFailureHandler (see authFilters.xml)
+## The OEAuthnFailureHandler is called when a user account validation fails.
+
+OEAuthnFailureHandler.tokenErrorDetail: The amount of of error detail to
+ return to the client if user authentication fails during an OpenEdge
+ SSO process.  See OESSO.error.detail
+ [${OESSO.error.detail}]
+
+## Properties for the OEFormEntryPoint bean (see authFilters.xml)
+## The OEFormEntryPoint bean is invoked when a HTTP request requires user login
+## services and an OpenEdge SSO token to be generated and returned.  
+## It interfaces with the OESSOTokenManager bean to determine if an
+## SSO, JSON, or HTML  type of reponse message is returned.
+
+OEFormEntryPoint.tokenErrorDetail: The amount of error detail to return to
+ a client when form user login fails as part of an OpenEdge SSO token
+ authentication process. See OESSO.error.detail 
+ [${OESSO.error.detail}]
+
+## Properties for the OESSOTokenManager bean (see authFilters.xml)
+## The OESSOTokenManager bean is the primary component for the verification 
+## and generation of OECP SSO tokens.  The OESSOTokenManager works in a
+## supporting role for other Spring filter beans that are actively involved
+## in the HTTP request authentication process.
+##
+OESSOTokenManager.tokenPolicy: A non-blank, case-insensitive, string value
+ { disabled | ifRequired | always } that controls the generation and return
+ of OpenEdge SSO tokens after a successful user authentication.
+    disabled    Never return a SSO token
+    ifRequired  Return a SSO token only if the client asks for one by
+                passing a URL query option (see ssoTokenURLOption property)
+    always      Always generate and return a SSO token after successful
+                user authentication
+ [disabled]
+
+OESSOTokenManager.ssoTokenURLOption: A non-blank, case-insensitive, string
+ value that holds the HTTP URL query option name that a client uses to
+ request a SSO token returned after a successful user authentication.  This
+ property is ignored if the tokenPolicy is disabled or always.
+ [OECP]
+
+OESSOTokenManager.ssoTokenExpires: A non-zero positive integer value that
+ holds the number of seconds a SSO token will be valid after it is
+ initially issued.  After the specified time elapses, the SSO token may not be used
+ until it is replaced or refreshed.  This time value is only effective the
+ first time a SSO token is generated.
+ [3600]
+
+OESSOTokenManager.ssoAllowScope: An optional, case-insensitive, comma-separated
+ list of string values that is checked by a SSO token consumer to ensure the
+ SSO token used to gain service access has been granted by the producer of the
+ SSO token.  Used with the ssoGrantScope to support multiple SSO token producers, 
+ it limits which services those tokens may be used to access.   When blank, no 
+ Scope checking is performed by the SSO token consumer.
+ []
+
+OESSOTokenManager.ssoGrantScope:  An optional, case-insensitive, comma-separated
+ list of string values that is granted (i.e. embeded) to a SSO token when it is
+ initially created after user authentication.  It is used in conjunction with 
+ the ssoAllowScope consumer setting. When blank, no Scope grants are included in
+ the SSO token.
+ []
+
+OESSOTokenManager.ssoTokenRefresh: A boolean value that when true issues
+ a refresh token to the client at the same time an SSO token is initially issued.
+ Refresh tokens never expire once issued.  When a refresh token is not returned
+ to a client the SSO token's total lifetime is controlled using ssoTokenExpires.
+ Refresh tokens are only honored by the same PAS for OE web application that
+ issued it.
+ [true]
+
+OESSOTokenManager.ssoRefreshDeltaTime: A non-zero positive integer value that
+ holds the number of seconds a refreshed SSO token will be valid for.
+ After this amount of time the SSO token may not be used until it is replaced 
+ or refreshed.  This time value is ignored if the ssoTokenRefresh is false
+ [3600]
+
+OESSOTokenManager.springRolePrefix: An optional, case-sensitive, string value 
+ used as a Role name prefix in the event the Spring Security authentication 
+ process has not supplied prefixed Role names.  A blank value disables prefixes.
+ []
+
+
+## Properties for the OESSOFilter bean (see authFilters.xml)
+## The OESSOFilter bean is added to the HTTP authentication process
+## to look for an HTTP [Authorization] header that contains an OECP SSO token.
+## If no header and token is found, it passes control to the next step
+## in the authentication process.  If a header and token is found it will
+## use the OESSOTokenManager to extract, verify, and convert the OECP
+## SSO token into a native OE ClientPrincipal token that is passed to the
+## ABL session.
+##
+## The OESSOFilter bean has properties that control what header to look
+## for in the HTTP request, what the header's authentication-scheme name
+## is, and whether OECP SSO is enabled.
+OESSOFilter.authPolicy: A non-blank, case-insensitive, string value that 
+ controls whether an OpenEdge SSO token has access the web service:
+    disabled    Do not accept an OpenEdge SSO token to access the service
+    sufficient  If an OpenEdge SSO token is found in an inbound HTTP request
+                header and it can be validated, allow the client access to 
+                the service
+    required    A valid OpenEdge SSO is required to be passed by a client 
+                in order to access the service
+ [disabled]
+
+OESSOFilter.authmanager: A string value that holds a reference to an 
+ authentication manager.  See the property description for http.all.authmanager
+ [${http.all.authmanager}]
+
+OESSOFilter.authScheme: A non-blank, case-insensitive, string value holding
+ the HTTP Authorization header's authentication scheme name that identifies
+ an OpenEdge SSO token.  Normally this property value should not be changed,
+ but appears as required by the OESSOFilter's base class.
+ [OECP]
+
+OESSOFilter.authClientType: A non-blank, case-sensitive, string value that
+ contains a Java regular expression pattern that is used to limit which
+ client types may SSO to the service.  The pattern will be matched against
+ a HTTP request's User-agent header.  An asterisk default value provides
+ a '.*' pattern that allows any client type.
+ [*]
+
+OESSOFilter.authErrorDetail: Specifies how much error information is returned
+ to a client if an error occurs in validating an OpenEdge SSO token.  See
+ OESSO.error.detail for more information.
+ [${OESSO.error.detail}]
+
+OESSOFilter.authSecurity: See OESSO.require.https
+ [${OESSO.require.https}]
+
+
+## Properties for the OESSORefreshFilter bean (see authFilters.xml)
+## The OESSORefreshFilter bean is injected into the authentication process
+## and intercepts client requests to refresh an expired OECS SSO token.
+## If no request is found, the bean passes the request to the next step
+## in the authentication process.  When a request if found, it interfaces
+## with the OESSOTokenManager to validate the refresh request and issue 
+## an updated OECP SSO token that has a new expiration date.
+## 
+## The OESSORefreshFilter has properties that allow it to recognize when
+## a HTTP request is asking to refresh a SSO token.
+
+OESSORefreshFilter.refreshURL: A non-blank, case-sensitive, string holding
+ the URL path a client must use to request a refreshed OpenEdge SSO token
+ (i.e. one with a new expiration date).  Note: Client requests to get a
+ refresh token must be made to the same web service who originally issued
+ the SSO token.
+ [/static/auth/token]
+
+OESSORefreshFilter.refreshURLOption: A non-blank, case-sensitive, URL query
+ option name that identifies a refresh operation should be performed when
+ making a HTTP request to the OESSORefreshFilter.refreshURL URL.  
+ [refresh]
+
+OESSORefreshFilter.refreshClientType: A non-blank, case-sensitive, string 
+ value that contains a Java regular expression pattern that is used to 
+ limit which client types may SSO to the service.  The pattern will be 
+ matched against a HTTP request's User-agent header.  An asterisk default 
+ value provides a '.*' pattern that allows any client type.
+ [*]
+
+OESSORefreshFilter.refreshErrorDetail: The amount of error detail information
+ to return to a client should an error occur during a SSO token refresh 
+ operation.  See OESSO.error.detail
+ [${OESSO.error.detail}]
+
+OESSORefreshFilter.refreshSecure:  See OESSO.require.https
+ [${OESSO.require.https}]
+
+
+############# Custom Authorization header #####################################
+## Propertied for the customAuthorizationFilter bean (see customAuthHeaderFilter.xml)
+## The custom HTTP Authorization header filter provides a hook into the
+## Spring Security process for securely handling Authorizaiton headers
+## that have a custom 'scheme'.  
+## NOTE: The default class for this filter bean is a NOOP placeholder.
+## The developer is required to configure the correct Java class
+## NOTE: customAuthorizationFilter is only enabled in BASIC security
+## configurations that do not depend upon HTTP session contexts
+
+customAuthorizationFilter.authPolicy: A non-blank, case-insensitive, string 
+ value that controls the whether an SSO token matching the authScheme can
+ be used to access the service:
+    disabled    Do not accept an SSO token to access the service
+    sufficient  If a SSO token is found in an inbound HTTP request
+                header and it can be validated, allow the client access to 
+                the service
+    required    A valid SSO token is required to be passed by a client 
+ [disabled]
+
+customAuthorizationFilter.authScheme: A non-blank, case-insensitive, string 
+ value holding the HTTP Authorization header's authentication scheme name 
+ that identifies an SSO token.  
+ [CHANGEME]
+
+customAuthorizationFilter.authClientType: A non-blank, case-sensitive, string 
+ value that contains a Java regular expression pattern that is used to 
+ limit which client types are allowed SSO access to the service.  The pattern will be 
+ matched against an HTTP request's User-agent header.  An asterisk default 
+ value provides a '.*' pattern that allows any client type.
+ [*]
+
+customAuthorizationFilter.authHeader: A non-blank, case-insensitive, string
+ value of the HTTP request header the SSO token filter should look for in 
+ an inbound HTTP request.  The header must match the format specified by the
+ HTTP 1.1 standard for the Authorization header.
+ [Authorization]
+
+customAuthorizationFilter.authErrorDetail: The amount of error detail information
+ to return to a client should an error occur during a SSO token refresh 
+ operation.  See OESSO.error.detail
+ [${OESSO.error.detail}]
+
+customAuthorizationFilter.authSecurity: See OESSO.require.https
+ [true]
+
+customAuthorizationFilter.ignoreFailure: A boolean value that indicates whether
+ certain error conditions found by the SSO token validation process can be ignored.
+ [false]
+
+customAuthorization.AuthProvider.multiTenant: A boolean value that when true allows the
+ user-id being authenticated to contain an ampersand '@' and OpenEdge Domain 
+ name. When false a user-id containing an ampersand is not allowed.
+ [true]
+
+customAuthorization.AuthProvider.userDomain: A case-insentive string that provides the 
+ OpenEdge Domain name to append to the user-id being authenticated.  If
+ multiTenant property is true, the Domain name is appended only if the
+ user-id being authenticated does not already specify a Domain name. A blank
+ value indicates the default blank OpenEdge Domain name will be appended.
+ []
+
+customAuthorization.UserDetails.realmClass=CustomAuthzHeaderRealm
+OERealm.UserDetails.realmClass: A non-blank, case-insensitive, OpenEdge class
+ that will be called to process the Authorization token as part of the Spring 
+ Security authentication process.
+ [CustomAuthzHeaderRealm]
+
+customAuthorization.UserDetails.grantedAuthorities: A case-sensitive, comma-separated, list
+ of static Role names that will be added when generating a user authentication
+ token.  The Role names defined by this property will be added when the 
+ 'roleAttrName' property is blank or the OERealm server class returns a blank 
+ value. When this property's value is blank, no Role names will be added. 
+ Note: The convention for Spring Security Role names is to have a 'ROLE_' 
+ prefix to distinguish a role name from a user-id name.
+ [ROLE_PSCUser]
+
+customAuthorization.UserDetails.rolePrefix: A non-blank, case-senisitive, string value of
+ the prefix that will be prepended to user account Role names returned from
+ the OERealm server.
+ [ROLE_]
+
+customAuthorization.UserDetails.roleAttrName: A case-sensitive, string value of the 
+ GetAttribute() property name that will be used to query the Authorization header 
+ value's list of granted Roles.  A blank value will inhibit querying the OERealm 
+ server.  If the header value does not include a list of roles, return a blank or 
+ a fixed value.
+ Note: Any error returned by the OERealm server will be treated as an
+ internal server error (500) instead of an indication of an authentication
+ failure.
+ [ATTR_ROLES]
+
+customAuthorization.UserDetails.enabledAttrName: A case-sensitive, string value of the 
+ GetAttribute() property name that will be used to query the Authorization header's 
+ account enabled property.  A blank value will inhibit querying the OERealm server. 
+ If the header value does not include a user account enabled property, return "1".
+ Note: Any error returned by the OERealm server will be treated as an
+ internal server error (500) instead of an indication of an authentication
+ [ATTR_ENABLED]
+
+customAuthorization.UserDetails.lockedAttrName: A case-sensitive, string value of the 
+ GetAttribute() property name that will be used to query the Authorization header's 
+ user account locked property.  If the header value des not include a locked 
+ property, return "0".
+ A blank value will inhibit querying the OERealm server. 
+ Note: Any error returned by the OERealm server will be treated as an
+ internal server error (500) instead of an indication of an authentication
+ [ATTR_LOCKED]
+
+customAuthorization.UserDetails.expiredAttrName: A case-sensitive, string value of the 
+ GetAttribute() property name that will be used to query the Authorization header's 
+ user account expired property.  If the header value does not  include an expired 
+ property return "0".
+ A blank value will inhibit querying the OERealm server. 
+ Note: Any error returned by the OERealm server will be treated as an
+ internal server error (500) instead of an indication of an authentication
+ [ATTR_EXPIRED]
+
+customAuthorization.UserDetails.userIdAttrName: A case-sensitive, string value 
+ GetAttribute() property name that will be used to query the Authorization header's 
+ user account ID that should be loaded into the ClientPrincpal.  This should
+ be the user account name extracted from the Authorization header's value.
+ Always return a non-blank user account name, which may optionally include an 
+ OE Domain name.
+  [ATTR_USERID]
+ 
+customAuthorization.UserDetails.propertiesAttrName: A case-sensitive, string value
+ GetAttribute() property name that will be used to query the Authorization header's 
+ user account properties.  Properties are returned as a JSON object of "name":"value" 
+ pairs and will be added to a Client-Principal.  If a blank string is returned no
+ properties will be added.  A blank value will inhibit querying the OERealm server. 
+ Note: Any error returned by the OERealm server will be treated as an
+ internal server error (500) instead of an indication of an authentication
+ [ATTR_PROPERTIES]
+
+customAuthorization.UserDetails.appendRealmError: A boolean value that when true 
+ adds additional authentication failure information.
+ [false]
+
+customAuthorization.UserDetails.realmTokenFile: A case-sensitive file path that 
+ holds a sealed Client-Principal.  The Client-Principal is sent to the OERealm 
+ server OOABL class on each request so that it can distinguish a valid OEREealm 
+ client from a hacker attempting to retrieve user account information.  A
+ blank value will not send a Client-Principal to the OERealm server class.
+ The Client-Principal file is created using the DLC/bin/genspacp utility.
+ []
+
+########## Authentication Provider Bean configuration#########################
+## Default configuration of authentication bean properties. This needs to be 
+## changed with other values as per the production configuration. It has 
+## separate sections for authentication manager beans like local, ldap, 
+## oerealm.
+##############################################################################
+
+########## local and extlocal authmanager user accounts ######################
+local.userservice.properties: A non-blank, case-sensitive, string file path
+ value used to locate and load a text file holding user accounts.  The file
+ path MUST be relative to the root of the web application, and MUST conform
+ to the format of the Spring Security user account file.
+        user-id=password,role-name[,role-name...],{enabled|disabled}
+  [/WEB-INF/users.properties]
+
+########## LDAP Authentication Manager #######################################
+
+ldap.url: A non-blank string value holding an LDAP URL that supports the
+ LDAPv3 client API.
+    {ldap|ldaps}://host[:port][/<root-dn>]
+        Note: <root-dn> is case-sensitive if supplied.
+ [ldap://localhost:389]
+
+ldap.manager-dn: A case-insensitive X.509 Distinguished Name (DN) of a
+ directory service account used to lookup the user-id being authenticated,
+ when that user-id is not a fully qualified X.509 user account DN.  
+ Note: this user account must have directory service privileges to 
+ perform searches and object reads in order to function.
+ [uid=admin,ou=system]
+
+ldap.manager-password: A non-blank, case-sensitive, user account password
+ for the account configured in ldap.manager.dn.  The value may be a clear-text
+ value (not recommended) or a value produced by the DLC/bin/stspwdutil utility
+ [secret]
+
+ldap.root.dn: An optional case-sensitive string value used to qualify the
+ ldap.url property URL with the directory service's root-DN, when the root
+ DN is not provided in the URL.  This value is appended to the URL.
+ Note: Not all directory services require a URL that includes a root-DN
+ []
+
+ldap.grouprole.attribute: A non-blank, case-insensitive, string that identifies
+ the directory service group [Role] object attribute name that will be used
+ to create a Spring Security Role name for the authenticated user.
+ [cn]
+
+ldap.groupsearch.filter: A non-blank, case-insensitive, string value holding
+ an LDAPv3 client API search query pattern.  This pattern will be used to 
+ locate the directory service group objects the authenticated user is a
+ member of (i.e. the Roles the authenticated user has been granted).
+ The pattern must have a {0} pattern in it, which is substituted with the
+ authenticated user's x.509 DN - as found during the user account lookup
+ phase of user authentication.
+ [(member={0})]
+
+ldap.groupsearch.base: A non-blank, case-insensitive, string value holding a
+ x.509 directory service DN that forms the root of the search for group 
+ objects the authenticated user is a member of.
+ [dc=example,dc=com]
+
+ldap.usersearch.base: A non-blank, case-insensitive, string value holding a
+ x.509 directory service DN that forms the root of the search for an
+ account of the user being authenticated.
+ [dc=example,dc=com]
+
+ldap.usersearch.filter: A non-blank, case-insensitive, string value holding
+ an LDAPv3 client API search query pattern.  This pattern will be used to 
+ locate the directory service user account object for the user being
+ authenticated.  The pattern must have a {0} pattern in it, which is 
+ substituted with the user-id of the user being authenticated.
+ Note: Not all directory services store the user-id in the same object
+ attribute name.  Alternatively, the user-id may be an e-mail attribute
+ name, surname, or any other user account attribute name.  See the
+ directory service's schema for a list of supported attributes.
+ [(uid={0})]
+
+## Properties for the 'ldap' Authentication Manager (see authManager.xml)
+## The LDAP authentication provider plug-in, with its references to the beans 
+## that implement binding to the service, populating roles, and how to make a 
+## connection.
+
+ldap.authprovider.useAuthenticationRequestCredentials: A boolean value that
+ determines whether the supplied password will be used as the credentials
+ in the successful Spring Security authentication token.
+ [false]
+
+## Properties for the 'ldap' Authentication Manager (see authManager.xml)
+## The extended LDAP authentication manager configuration is an advanced
+## version of the simple ldap authentication manager above.  It has many more
+## properties to control its operations at a much finer granularity.
+## 
+## <b:bean id="ldapAuthenticationProvider"
+
+ldap.contxtSrc.url: See ldap.url property
+ [${ldap.url}]
+
+ldap.contxtSrc.base: See ldap.root.dn property
+ [${ldap.root.dn}]
+
+ldap.contxtSrc.userDn: See ldap.manager-dn property
+ [${ldap.manager-dn}]
+
+ldap.contxtSrc.password: See ldap.manager-password property
+ [${ldap.manager-password}]
+
+ldap.contxtSrc.referral: A non-blank, case-sensitive, string value that 
+ configures whether searches for a directory service user account follows
+ referrals (i.e. soft-links to other objects).  Following referrals may
+ be slow, and can, in some directory services like Active Directory, 
+ return a PartialResultsException.  The allowed values are:
+    ignore  Do not follow referrals
+    follow  Follow referrals
+ [ignore]
+
+ldap.contxtSrc.timeout: A non-zero positive integer that indicates the number
+ of seconds to allow before an LDAPv3 Client API call times out.
+ [5000]
+
+
+## The LDAP user account search operation's parameters used by the above ldap 
+## context source that starts at a base DN, searches the entire subtree, 
+## and tries to find a user object whose attribute matches the search filter
+
+ldap.search.base: See ldap.usersearch.base property
+ [${ldap.usersearch.base}]
+
+ldap.search.subtree: A boolean value that controls whether a directory service
+ search includes sub-trees.
+ [true]
+
+ldap.serach.attribute: See ldap.usersearch.filter
+ [${ldap.usersearch.filter}]
+
+## Properties to describes which LDAP user account role memberships (a.k.a. 
+## Spring authorities) to return into the security token to be used by the 
+## application's authorization processes.  The authorities are found by 
+## searching the LDAP directory for objects whose attributes contain the 
+## user account's fully qualified DN as a member
+
+ldap.authpopulator.rolePrefix: A case-sensitive string value that is a prefix
+ value to prepend to directory service group names to turn them into Spring
+ Security Role names. The resulting Spring Security Role names will be used
+ to grant access to web application Resource URLs.
+ [ROLE_]
+
+ldap.authpopulator.searchBase: See ldap.groupsearch.base property
+ [${ldap.groupsearch.base}]
+
+ldap.authpopulator.groupSearchFilter: See ldap.groupsearch.filter property
+ [${ldap.groupsearch.filter}]
+
+ldap.authpopulator.groupRoleAttribute: See ldap.grouprole.attribute property
+ [${ldap.grouprole.attribute}]
+
+ldap.authpopulator.searchSubtree: A boolean value that controls whether a 
+ directory service search includes sub-trees.
+ [true]
+
+ldap.authpopulator.ignorePartialResultException: A boolean property that 
+ controls whether partialResultException warnings are treated as errors or not.
+ A false value treats partialResultException warings as errors.  A true
+ value treats partialResultException warnings as a warning.
+ [true]
+
+ldap.authpopulator.convertToUpperCase: A boolean value that controls whether
+ the directory service group object name used to populate Spring Security
+ user Role names is converted to upper-case or not.  
+ [true]
+
+########## OERealm user account server configuration #########################
+## Properties for the oerealm Authentication Manager (see authManageres.xml)
+## that connects to an AppServer Realm service and uses it as a 
+## source of user account information during the authentication step managed 
+## by the OERealmAuthProvider bean. The sample in this template requires 
+## changing the properties "realmURL" and "realmClass" to contain the run-time 
+## AppServer used for authentication and the developer-supplied OOABL class name. 
+
+OERealm.AuthProvider.multiTenant: A boolean value that when true allows the
+ user-id being authenticated to contain an ampersand '@' and OpenEdge Domain 
+ name. When false a user-id containing an ampersand is not allowed.
+ [true]
+
+OERealm.AuthProvider.userDomain: A case-insentive string that provides the 
+ OpenEdge Domain name to append to the user-id being authenticated.  If
+ multiTenant property is true, the Domain name is appended only if the
+ user-id being authenticated does not already specify a Domain name. A blank
+ value indicates the default blank OpenEdge Domain name will be appended.
+ []
+
+OERealm.AuthProvider.accntinfo: A boolean value that when true will
+ load the OERealm server class's account state information (i.e. enabled,
+ locked, expired,...) into the Client-Principal's properties.
+ [true]
+
+OERealm.AuthProvider.authz: A boolean value that when true will load
+ the OERealm server class's's authorized Role list into the 
+ Client-Principal's Role attribute.
+ [true]
+
+OERealm.AuthProvider.expires: An integer value that sets the Client-Princpal
+ object's expiration time.  The value range is 0 to n, where a 0 value
+ indicates no expiration will be set.
+ [0]
+
+OERealm.AuthProvider.roles: An optional case-sensitive String value
+ holding a comma separated list of static Client-Principal Role 
+ names that will be inserted into a Client-Principal.  This static
+ list is added verbatim and will not have duplicates removed from the
+ role list returned by the OERealm server class.  Note: the Role names
+ in this list must include the 'ROLE_' prefix when that prefix is used
+ in the intercept-url access controls.  When blank no additional Role 
+ information will be inserted into the Client-Principal and all Roles 
+ used for Spring Security URL access controls and/or ABL business 
+ application must come from the OERealm server class's returned properties.
+ []
+
+ OERealm.AuthProvider.accntinfo=true
+ OERealm.AuthProvider.authz=true
+ OERealm.AuthProvider.expires=0
+ OERealm.AuthProvider.roles=
+
+# Declare placeholders for up to 10 OEClientPrincipalFilter
+# properties.  Any number of properties larger than 10 
+# requires customization of authFilters.xml.
+#
+# Any property 'key' value whose first character is a
+# comment (#) is ignored when creating a Client-Principal
+# token
+OERealm.AuthProvider.properties.1.key=#doNotAdd
+OERealm.AuthProvider.properties.1.value=
+
+OERealm.AuthProvider.properties.2.key=#doNotAdd
+OERealm.AuthProvider.properties.2.value=
+ 
+OERealm.AuthProvider.properties.3.key=#doNotAdd
+OERealm.AuthProvider.properties.3.value=
+ 
+OERealm.AuthProvider.properties.4.key=#doNotAdd
+OERealm.AuthProvider.properties.4.value=
+ 
+OERealm.AuthProvider.properties.5.key=#doNotAdd
+OERealm.AuthProvider.properties.5.value=
+ 
+OERealm.AuthProvider.properties.6.key=#doNotAdd
+OERealm.AuthProvider.properties.6.value=
+ 
+OERealm.AuthProvider.properties.7.key=#doNotAdd
+OERealm.AuthProvider.properties.7.value=
+ 
+OERealm.AuthProvider.properties.8.key=#doNotAdd
+OERealm.AuthProvider.properties.8.value=
+ 
+OERealm.AuthProvider.properties.9.key=#doNotAdd
+OERealm.AuthProvider.properties.9.value=
+ 
+OERealm.AuthProvider.properties.10.key=#doNotAdd
+OERealm.AuthProvider.properties.10.value=
+
+OERealm.UserDetails.realmURL: A non-blank, case-sensitive, URL that sends
+ user account requests to the PAS for OpenEdge's multi-session Agent.
+ [internal://nxgas]
+
+OERealm.UserDetails.realmClass: A non-blank, case-insensitive, OpenEdge class
+ that will be called to retrieve user account field information for use in
+ the Spring Security authentication process.
+ [OpenEdge.Security.Realm.HybridRealm]
+
+OERealm.UserDetails.grantedAuthorities: A case-sensitive, comma-separated, list
+ of static Role names that will be added when generating a user authentication
+ token.  The Role names defined by this property will be added when the 
+ 'roleAttrName' property is blank or the OERealm server class returns a blank 
+ value. When this property's value is blank, no Role names will be added. 
+ Note: The convention for Spring Security Role names is to have a 'ROLE_' 
+ prefix to distinguish a role name from a user-id name.
+ [ROLE_PSCUser]
+
+OERealm.UserDetails.rolePrefix: A non-blank, case-senisitive, string value of
+ the prefix that will be prepended to user account Role names returned from
+ the OERealm server.
+ [ROLE_]
+
+OERealm.UserDetails.roleAttrName: A case-sensitive, string value of the 
+ user account property name used to query the OERealm server for an account's
+ list of granted Roles.  A blank value will inhibit querying the OERealm
+ server. 
+ Note: Any error returned by the OERealm server will be treated as an
+ internal server error (500) instead of an indication of an authentication
+ failure.
+ [ATTR_ROLES]
+
+OERealm.UserDetails.enabledAttrName: A case-sensitive, string value of the 
+ user account property name used to query the OERealm server for an account's
+ enabled state.  A blank value will inhibit querying the OERealm server. 
+ Note: Any error returned by the OERealm server will be treated as an
+ internal server error (500) instead of an indication of an authentication
+ [ATTR_ENABLED]
+
+OERealm.UserDetails.lockedAttrName: A case-sensitive, string value of the 
+ user account property name used to query the OERealm server for an account's
+ locked-out state.  A blank value will inhibit querying the OERealm server. 
+ Note: Any error returned by the OERealm server will be treated as an
+ internal server error (500) instead of an indication of an authentication
+ [ATTR_LOCKED]
+
+OERealm.UserDetails.expiredAttrName: A case-sensitive, string value of the 
+ user account property name used to query the OERealm server for an account's
+ expired state.  A blank value will inhibit querying the OERealm server. 
+ Note: Any error returned by the OERealm server will be treated as an
+ internal server error (500) instead of an indication of an authentication
+ [ATTR_EXPIRED]
+
+OERealm.UserDetails.realmPwdAlg: A positive integer value that indicates to the
+ OERealm server which form the user account password value will be in when 
+ validating an account's password:
+    0       clear-text
+    3       HTTP Digest hash
+ Note: Any error returned by the OERealm server when validating a user 
+ account password will be treated as an internal server error (500) instead 
+ of an indication of an authentication
+ [0]
+
+OERealm.UserDetails.appendRealmError: A boolean value that when true 
+ adds additional authentication failure information.
+ [false]
+
+OERealm.UserDetails.propertiesAttrName: A case-sensitive, string value of the 
+ user account property name used to query the OERealm server for an account's
+ properties.  Properties are returned as a JSON object of "name":"value" 
+ pairs and will be added to a Client-Principal.  A blank value will inhibit 
+ querying the OERealm server. 
+ Note: Any error returned by the OERealm server will be treated as an
+ internal server error (500) instead of an indication of an authentication
+ []
+
+OERealm.UserDetails.realmTokenFile: A case-sensitive file path that holds a
+ sealed Client-Principal.  The Client-Principal is sent to the OERealm server
+ OOABL class on each request so that it can distinguish a valid OEREealm 
+ client from a hacker attempting to retrieve user account information.  A
+ blank value will not send a Client-Principal to the OERealm server class.
+ The Client-Principal file is created using the DLC/bin/genspacp utility.
+ []
+
+########## Microsoft Active Direcotry user account services ##################
+## The Spring Security Active Directory support is a convenience provided 
+## when simple conventional configurations are possible.  This support includes
+## a large number of non-configurable properties that may not match every Microsoft
+## Active Directory installation.  If the simple version does not work, fall 
+## back to the LDAP support to adapt to specific installation criteria.
+##
+## Properties for the 'ad' (ActiveDirectory) Authentication Manager (see authManagers.xml)
+
+ad.user.domain: A non-blank, case-insensitive, string name of the Active Directory
+ user domain name to append when the input user-id does not supply one.
+ [changeme.com]
+
+ad.ldap.url: A non-blank string value holding an LDAP URL that supports the
+ LDAPv3 client API.
+    {ldap|ldaps}://host[:port][/<root-dn>]
+        Note: <root-dn is case-sensitive if supplied.
+ [ldap://adhost:389]
+
+ad.ldap.rootdn: A non-blank, case-insensitive, x.509 directory service 
+ Distinguished Name (DN) of the directory service object that is the root
+ of searches for the user's account.  This is normally the Root DN of
+ the directory service, but in some Active Directory configurations may
+ be different.
+ [dc=changeme,dc=com]
+
+ad.AuthoritiesMapper.prefix: A case-sensitive string value that is a prefix
+ value to prepend to directory service group names to turn them into Spring
+ Security Role names. The resulting Spring Security Role names will be used
+ to grant access to web application Resource URLs.
+ [ROLE_]
+
+ad.AuthoritiesMapper.convertToUpperCase: A boolean value that controls whether
+ the directory service group object name used to populate Spring Security
+ user Role names is converted to upper-case or not.  
+ [true]
+
+########## OAuth2 standard Authorization/Resource services ####################
+## OAuth2 authorization handling for 'Resource Servers' web data service access 
+## and 'Authorization Servers' for obtaining access & refresh tokens to access a
+## Resource server's data.
+
+oauth2.ResourceServer.enable: A non-blank, case-sensitive, string value that 
+ enables OAuth2 Resource server support.  The valid values are:
+    enable
+    disable
+ [enable]
+
+oauth2.AuthorizationServer.enable: A non-blank, case-sensitive, string value that
+ enables the OAuth2 Authorization server support.  
+ Note:  This property is a placeholder for extended OAuth2 support.
+ [disable]
+
+jwtToken.signatureAlg: string value { mac|rsa } 
+ JWT token signer typeused for signing/validating a JWT.   
+ [mac]
+
+jwtToken.macKey:  string value holding clear-text or case-sensitive output of 
+ DLC/bin/stspwdutil that will be used with the 'macAlg' property to establish 
+ a trust-chain between the producer signer of a JWT and the consumer validator 
+ of that JWT
+ [oeph3::B8E894037D0A296A0908F2FAFB0A0148] (changeme)
+
+jwtToken.macAlg: A non-blank, case-sensitive, string value { HMACSHA256 | HMAC384 | HMACSHA512 }
+ Specifies the HMAC algorithm to use in generating/validating a JWT
+ [HMACSHA256]
+
+jwtToken.jksKeyStore: absolute file system pathname to JKS public/private keystore
+ holding public/private keys used when rsa is the algorithm used for signing
+ or verifying JWT
+ []
+
+jwtToken.jksKeystore.pwd:  A non-blank, case-sensitive, clear-text or output 
+ valud of the DLC/bin/stspwdutil utility.  This is the JKS keystore's password
+ to gain access to public/private keys.
+ [oeph3::B8E894037D0A296A0908F2FAFB0A0148] (changeme)
+
+jwtToken.jksKeystore.alias:  A non-blank, case-sensitive, JKS keystore entry 
+ alias name of the public/private keys used when using rsa signing/verification 
+ of a JWT
+ [sample]
+
+jwtToken.jwtToken.defaultRoles: An empty or case-sensitive comma separated 
+ list of Role names to add when creating a JWT.
+ []
+
+jwtToken.jwtToken.usernameField: A non-blank, case-insensitive, string JWT token 
+ claim holding end-user login id. 
+ [sub]
+
+jwtToken.jwtToken.mapScopeToRole: A boolean value that when true maps JWT 
+ Scope values to user Spring Security Role names.
+ [true]
+
+jwtToken.jwtToken.scopeToRolePrefix: A non-blank, case-sensitive, string prefix 
+ that is prepend when maping JWT scopes to Role names.
+ [scope.]
+
+jwtToken.includeAllClaims: A boolean value that when true will add all JWT claim 
+ fields as property values(excluding user-id,Roles,expires) in a Client-Principal
+ [true]
+
+## OAuth2 Authorization server configuration 
+## The OAuth2 Authorization server's responsibility is to manage interactions 
+## with an OAuth2 client application and authenticate the client application, 
+## or end-user, identity and then send them and "access token", and optionally 
+## a "refresh token".  The "access token" can be used to access OAuth2 Resource 
+## servers (see configuration below), and the "refresh token" can be used with 
+## this OAuth2 Authorization server to get a new "access token" after the 
+## current one expires.
+
+oauth2.authSvc.clientCfg: filename in <web-app>/WEB-INF/spring that holds the 
+ authorization server's client configuration.
+ [oauth2AuthSvcClients.cfg]
+
+oauth2.authSvc.grantType.authorizationCode.disable: A boolean value to enable/disable the 
+ OAuth2 Authorization model.
+ [false]
+
+oauth2.authSvc.grantType.implicit.disable: A boolean value to enable/disable the OAuth2 
+ Implicit model.
+ [false]
+
+oauth2.authSvc.grantType.refresh.disable: A boolean value to enable/disable the OAuth2 token 
+ refresh model.
+ [false]
+
+oauth2.authSvc.grantType.clientCredentials.disable: A boolean value to enable/disable the 
+ OAuth2 client credentials model.
+ [false]
+
+oauth2.authSvc.grantType.password.disable: A boolean value to enable/disable the OAuth2 client 
+ password authentication model.
+ [false]
+
+oauth2.authSvc.refreshToken.enable: A boolean value to enable/disable generation of refresh 
+ tokens.
+ [true]
+
+oauth2.authSvc.refreshToken.reuse: A boolean value to enable/disable token reuse.
+ [true]
+
+oauth2.authSvc.accessToken.expiresSeconds: Time in seconds for an access 
+ token's lifetime.
+ [300000]
+
+oauth2.authSvc.refreshToken.expiresSeconds: Time in seconds for a refresh 
+ tokens's lifetime.
+ [2592000]
+
+oauth2.authSvc.realmName: The login realm string name to return in login 
+ failures.
+ [oeoauth]
+
+## OAuth2 Resource server configuration
+## An OAuth2 Resource server provides data-services for client applications. 
+## The client application sends an "access token" obtained from an OAuth2 
+## Authorization server, which the Resource server must validate before it is 
+## accepted.  Validation involves obtaining a JWT token that can be validated 
+## by the Resource server and its "claims" used to perform URL access control 
+## to the Resource service's data-services.  The JWT may be obtained as a 
+## "self-contained" access token or by using the access token as an indirect 
+## reference to a JWT stored in the issuing Authorization server.
+
+oauth2.resSvc.audience: A non-blank, case-insensitive, string that holds the 
+ JWT audience claim, aka application name, of this resource service. 
+ [oeablapp]
+
+oauth2.resSvc.stateless:  A boolean value to enable/disable enable stateless client access 
+(i..e no login sessions). 
+ [true]
+
+oauth2.resSvc.clientCfg:  File in <web-app>/WEB-INF/spring/ that holds the 
+ OAuth2 client configuration.
+ [oauth2ResSvcClients.cfg]
+
+oauth2.resSvc.requestmatcher: A non-blank, case-sensitive, string value { ant | regex }
+ Specifes the string pattern matcher used in URL access controls. 
+ [ant]
+
+oauth2.resSvc.csvpath: The non-blank, case-sensitive, <web-app> relative path 
+ to the CSV file used for URL SCOPE access controls
+ [WEB-INF/oeablSecurityJWT.csv]
+
+oauth2.resSvc.tokenServices: The non-blank, case-sensitive, string value { jwt | oauth2 }
+ Specifie eithr the JWT "self contained" or OAuth2 access token validation process.
+ [oauth]
+
+oauth2.resSvc.realmName: The non-blank, case-insensitive, Realm name returned 
+ in authentication validation failures.
+ [oeoauth]
+
+oauth2.resSvc.remoteTokenService.url: The Authorization Server URL to obtain 
+ a JWT ID token from a access token.
+ [https://localhost:443/oauth/check_token]
+
+oauth2.resSvc.remoteTokenService.loginId: The non-blank, case-insensitive, string
+ user-id to log into the Authorization Server an obtain a JWT ID token.
+ [changeme]
+
+oauth2.resSvc.remoteTokenService.loginPwd: The non-blank, case-sensitive, string
+ user password for logging into the Authorization Server.
+ [changme]
+
+oauth2.resSvc.remoteTokenService.tokenName: The non-blank, case-sensitive, Sting
+ form field name used to retrieve a JWT from the Authorization Server.
+ [token]
+
+oauth2.resSvc.jdbcTokenService.driver: The JDBC Java class name for the database 
+ driver.
+ [com.mysql.jdbc.Driver]
+
+oauth2.resSvc.jdbcTokenService.url: The jdbc URL to use when connecting to the 
+ database holding the Authorization Server's store of JWT access tokens.
+ [jdbc:mysql://localhost:3306/spring_security_db ]
+
+oauth2.resSvc.jdbcTokenService.loginId: The non-blank, case-insensitive, string
+ user-id to use in logging into the SQL db holding the JWT tokens.
+ [changeme]
+
+oauth2.resSvc.jdbcTokenService.loginPwd: The non-blank, case-sensitive, string
+ user password to use in logging into the SQL database.
+ [changeme]
+
+
