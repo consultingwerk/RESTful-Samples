@@ -218,4 +218,6 @@ Sandbox/
 *.lic
 *.lk
 
-DB/sports2000.*
+DB/
+restfulpasoe/logs/
+restfulpasoe/temp/
