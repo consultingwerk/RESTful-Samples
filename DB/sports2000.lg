@@ -1,0 +1,19 @@
+
+                Sun Nov 12 17:41:31 2017
+[2017/11/12@17:41:31.729+0100] P-20932      T-21792 I DBUTIL   : (451)   prostrct create session begin for mikef on CON:. 
+[2017/11/12@17:41:31.733+0100] P-20932      T-21792 I DBUTIL   : (12862) Structure file sports2000.st used to create database with blocksize 4096. 
+[2017/11/12@17:41:31.766+0100] P-20932      T-21792 I DBUTIL   : (334)   prostrct create session end. 
+[2017/11/12@17:41:31.789+0100] P-20932      T-21792 I DBUTIL   : (451)   procopy session begin for mikef on CON:. 
+[2017/11/12@17:41:31.963+0100] P-20932      T-21792 I DBUTIL   : (334)   procopy session end. 
+
+                Sun Nov 12 17:41:32 2017
+[2017/11/12@17:41:32.000+0100] P-20932      T-21792 I          : (451)   procopy get default SQL DBA session begin for mikef on CON:. 
+[2017/11/12@17:41:32.001+0100] P-20932      T-21792 I          : (15321) Before Image Log Initialisation at block 0  offset 0. 
+[2017/11/12@17:41:33.446+0100] P-20932      T-21792 I          : (1365)  Database copied from C:\Progress\OP3395~1\sports2000. 
+[2017/11/12@17:41:33.556+0100] P-20932      T-21792 I          : (15109) At Database close the number of live transactions is 0. 
+[2017/11/12@17:41:33.556+0100] P-20932      T-21792 I          : (15743) Before Image Log Completion at Block 0 Offset 623. 
+[2017/11/12@17:41:33.714+0100] P-20932      T-21792 I          : (334)   procopy get default SQL DBA session end. 
+
+                Sun Nov 12 17:46:42 2017
+[2017/11/12@17:46:42.191+0100] P-14916      T-15352 I DBUTIL   : (451)   prostrct list session begin for mikef on CON:. 
+[2017/11/12@17:46:42.226+0100] P-14916      T-15352 I DBUTIL   : (334)   prostrct list session end. 
