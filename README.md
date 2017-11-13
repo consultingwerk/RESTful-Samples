@@ -27,3 +27,5 @@ The relevant configuration settings are:
 
 - http://localhost:8830/web/Salesreps
 - http://localhost:8830/web/Salesreps/BBB
+- http://localhost:8830/web/Salesreps/HXM/Customers?query=lif
+- http://localhost:8830/web/Customers/1
