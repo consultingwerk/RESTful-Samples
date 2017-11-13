@@ -221,3 +221,4 @@ Sandbox/
 DB/
 restfulpasoe/logs/
 restfulpasoe/temp/
+.sonarlint/
