@@ -1,5 +1,5 @@
 /*------------------------------------------------------------------------
-    File        : Salesreps
+    File        : Customers
     Purpose     : 
     Syntax      : 
     Description : 
@@ -19,16 +19,16 @@ USING OpenEdge.Net.HTTP.Filter.Payload.* FROM PROPATH.
 USING OpenEdge.Core.* FROM PROPATH.
 USING OpenEdge.Net.HTTP.Filter.Writer.* FROM PROPATH.
 
-CLASS Salesrep.Salesreps 
+CLASS Customer.Customers 
     INHERITS WebHandler: 
 
-    DEFINE TEMP-TABLE ttSalesrep NO-UNDO SERIALIZE-NAME "Salesrep" LIKE Salesrep .
+    DEFINE TEMP-TABLE ttCustomer NO-UNDO SERIALIZE-NAME "Customer" LIKE Customer .
 
     /*------------------------------------------------------------------------------
      Purpose:
      Notes:
     ------------------------------------------------------------------------------*/
-    METHOD PROTECTED JsonArray GetLinks (pcSalesrep AS CHARACTER):
+    METHOD PROTECTED JsonArray GetLinks (piCustnum AS INTEGER):
         
         DEFINE VARIABLE oLinks AS JsonArray  NO-UNDO .
         DEFINE VARIABLE oLink  AS JsonObject NO-UNDO .  
@@ -37,74 +37,89 @@ CLASS Salesrep.Salesreps
         oLink = NEW JsonObject () . 
         
         oLink:Add ("rel", "self") .
-        oLink:Add ("href", SUBSTITUTE ("/web/Salesreps/&1", pcSalesrep)) . 
+        oLink:Add ("href", SUBSTITUTE ("/web/Customers/&1", piCustnum)) . 
         
         oLinks:Add (oLink) .
-        
-        oLink = NEW JsonObject () . 
-        
-        oLink:Add ("rel", "customers") .
-        oLink:Add ("href", SUBSTITUTE ("/web/Salesreps/&1/Customers", pcSalesrep)) . 
-        
-        oLinks:Add (oLink) .
-        
+                
         RETURN oLinks . 
 
     END METHOD.
 
-    METHOD PROTECTED JsonObject GetSalesrep (pcSalesrep AS CHARACTER):
+    METHOD PROTECTED JsonObject GetCustomer (piCustnum AS INTEGER):
         
         DEFINE VARIABLE oJson AS JsonObject NO-UNDO.
 
-        EMPTY TEMP-TABLE ttSalesrep.
+        EMPTY TEMP-TABLE ttCustomer.
         
-        FIND Salesrep WHERE Salesrep.Salesrep = pcSalesrep NO-LOCK NO-ERROR . 
+        FIND Customer WHERE Customer.CustNum = piCustnum NO-LOCK NO-ERROR . 
         
-        IF NOT AVAILABLE Salesrep THEN 
+        IF NOT AVAILABLE Customer THEN 
             UNDO, THROW NEW NotFoundException () .  
 
         oJson = NEW JsonObject () . 
         
-        CREATE ttSalesrep .
-        BUFFER-COPY Salesrep TO ttSalesrep .
+        CREATE ttCustomer .
+        BUFFER-COPY Customer TO ttCustomer .
 
-        oJson:Read (BUFFER ttSalesrep:HANDLE) .
+        oJson:Read (BUFFER ttCustomer:HANDLE) .
         
-        oJson:Add ("links", THIS-OBJECT:GetLinks (ttSalesrep.SalesRep)) .
+        oJson:Add ("links", THIS-OBJECT:GetLinks (ttCustomer.CustNum)) .
         
         RETURN oJson .
 
         FINALLY:
-            EMPTY TEMP-TABLE ttSalesrep.                    
+            EMPTY TEMP-TABLE ttCustomer.                    
         END FINALLY.
 
     END METHOD.
 
-    METHOD PROTECTED JsonArray GetSalesreps ():
+    METHOD PROTECTED JsonArray GetCustomers (pcSalesrep AS CHARACTER, 
+                                             pcQuery AS CHARACTER):
 
         DEFINE VARIABLE oJson AS JsonArray NO-UNDO.
         DEFINE VARIABLE i     AS INTEGER   NO-UNDO.
 
-        EMPTY TEMP-TABLE ttSalesrep.
+        EMPTY TEMP-TABLE ttCustomer.
         
-        FOR EACH Salesrep:
-            CREATE ttSalesrep.
-            BUFFER-COPY Salesrep TO ttSalesrep .
+        IF pcSalesrep > "" AND pcQuery > "" THEN DO:
+            FOR EACH Customer WHERE Customer.Salesrep = pcSalesrep 
+                                AND (Customer.Name MATCHES "*" + pcQuery + "*" 
+                                 OR  Customer.City MATCHES "*" + pcQuery + "*"):
+                CREATE ttCustomer.
+                BUFFER-COPY Customer TO ttCustomer .
+            END. 
+        END.
+        ELSE IF pcSalesrep > "" THEN DO:
+            FOR EACH Customer WHERE Customer.Salesrep = pcSalesrep: 
+                CREATE ttCustomer.
+                BUFFER-COPY Customer TO ttCustomer .
+            END. 
+        END.
+        ELSE IF pcQuery > "" THEN DO:
+            FOR EACH Customer WHERE Customer.Name MATCHES "*" + pcQuery + "*" 
+                                 OR Customer.City MATCHES "*" + pcQuery + "*":
+                CREATE ttCustomer.
+                BUFFER-COPY Customer TO ttCustomer .
+            END. 
+        END.
+        ELSE FOR EACH Customer:
+            CREATE ttCustomer.
+            BUFFER-COPY Customer TO ttCustomer .
         END.
         
         oJson = NEW JsonArray () . 
         
-        TEMP-TABLE ttSalesrep:WRITE-JSON ("JsonArray", oJson) .
+        TEMP-TABLE ttCustomer:WRITE-JSON ("JsonArray", oJson) .
         
         DO i = 1 TO oJson:Length:
             oJson:GetJsonObject (i):Add ("links",
-                                         THIS-OBJECT:GetLinks (oJson:GetJsonObject (i):GetCharacter ("SalesRep"))) .
+                                         THIS-OBJECT:GetLinks (oJson:GetJsonObject (i):GetInteger ("CustNum"))) .
         END.
         
         RETURN oJson .
 
         FINALLY:
-            EMPTY TEMP-TABLE ttSalesrep.                    
+            EMPTY TEMP-TABLE ttCustomer.                    
         END FINALLY.
         
     END METHOD . 
@@ -118,19 +133,25 @@ CLASS Salesrep.Salesreps
     METHOD OVERRIDE PROTECTED INTEGER HandleGet (poRequest AS OpenEdge.Web.IWebRequest):
         
         DEFINE VARIABLE cSalesrep   AS CHARACTER     NO-UNDO .
+        DEFINE VARIABLE iCustNum    AS INTEGER       NO-UNDO .
+        DEFINE VARIABLE cQuery      AS CHARACTER     NO-UNDO .
         DEFINE VARIABLE oJson       AS JsonConstruct NO-UNDO . 
         DEFINE VARIABLE oResponse   AS IHttpResponse NO-UNDO .
         
         ASSIGN oResponse             = NEW OpenEdge.Web.WebResponse ()
                oResponse:ContentType = 'application/json':U .
 
-        ASSIGN cSalesrep = poRequest:GetPathParameter("Salesrep") .
+        ASSIGN cSalesrep = poRequest:GetPathParameter("Salesrep") 
+               cQuery    = poRequest:GetContextValue ("QUERY_STRING":U)
+               iCustNum  = INTEGER (poRequest:GetPathParameter("CustNum")) NO-ERROR .
         
-        IF cSalesrep > "" THEN 
-            oJson = THIS-OBJECT:GetSalesrep (cSalesrep) .
-        ELSE 
-            oJson = THIS-OBJECT:GetSalesreps () .
-
+        IF NUM-ENTRIES (cQuery, "=") > 1 THEN 
+            ASSIGN cQuery = ENTRY (2, cQuery, "=":U) .
+        
+        IF iCustNum > 0 THEN 
+            oJson = THIS-OBJECT:GetCustomer (iCustNum) .
+        ELSE
+            oJson = THIS-OBJECT:GetCustomers (cSalesrep, cQuery) .
 
         oResponse:Entity = oJson .
 
