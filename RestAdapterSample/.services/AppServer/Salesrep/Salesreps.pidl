@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pidl:description targetNamespace="urn:schemas-progress-com:bpm:appserverbinding:0001" serviceType="wsad:OEAppServerInvoke" xmlns:wsad="urn:schemas-progress-com:bpm:appserverbinding:0001" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:pidl="http://www.progress.com/caf/idl1.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:java="http://www.progress.com/adapters/idl1.0/javatype">
+<pidl:types>
+</pidl:types>
+  <pidl:interface name="com.progress.openedge.pdt.bpminterfaces">
+    <pidl:operation name="Salesrep.Salesreps..GetSalesrep" pattern="http://www.progress.com/caf/idl1.0/request-response">
+      <pidl:output messageLabel="retVal" req="false" type="java:String">
+    </pidl:output>
+      <pidl:input messageLabel="pcSalesrep" req="false" type="java:String">
+    </pidl:input>
+    </pidl:operation>
+    <pidl:operation name="Salesrep.Salesreps..GetSalesreps" pattern="http://www.progress.com/caf/idl1.0/request-response">
+      <pidl:output messageLabel="retVal" req="false" type="java:String">
+    </pidl:output>
+    </pidl:operation>
+  </pidl:interface>
+  <pidl:binding name="com.progress.openedge.pdt.bpmbindings" interface="wsad:com.progress.openedge.pdt.bpminterfaces" type="urn:schemas-progress-com:bpm:appserverbinding:0001">
+<wsad:Operation isPersistent="false" useFullName="false" executionMode="11">
+  <wsad:Name>Salesrep.Salesreps</wsad:Name>
+  <wsad:ProcPath/>
+  <wsad:ProPath/>
+  <wsad:ProcExt>cls</wsad:ProcExt>
+  <wsad:ProcDetail isCustomized="false" usesUnknownDefault="true" useRetVal="false" usesTTMappingDefault="true" IsTTResultSet="true" usesBeforeImageDefault="true" IsMappedToSubmit="false">
+    <wsad:Name>Salesrep.Salesreps</wsad:Name>
+    <wsad:HelpString></wsad:HelpString>
+    <wsad:InternalProc isExcluded="false" hasBadParams="false">
+      <wsad:Name>GetSalesrep</wsad:Name>
+      <wsad:ProcType>2</wsad:ProcType>
+      <wsad:MethodDetail isCustomized="false" usesUnknownDefault="true" useRetVal="true" usesTTMappingDefault="true" IsTTResultSet="true" usesBeforeImageDefault="false" IsMappedToSubmit="false">
+        <wsad:Name>GetSalesrep</wsad:Name>
+        <wsad:ReturnValue allowUnknown="true" ordinal="0" writeXmlBeforeImage="false">
+          <wsad:Name>retVal</wsad:Name>
+          <wsad:OrigName>retVal</wsad:OrigName>
+          <wsad:Type>39</wsad:Type>
+          <wsad:Mode>2</wsad:Mode>
+        </wsad:ReturnValue>
+        <wsad:Parameter allowUnknown="true" ordinal="1" writeXmlBeforeImage="false">
+          <wsad:Name>pcSalesrep</wsad:Name>
+          <wsad:OrigName>pcSalesrep</wsad:OrigName>
+          <wsad:Type>1</wsad:Type>
+          <wsad:Mode>1</wsad:Mode>
+        </wsad:Parameter>
+      </wsad:MethodDetail>
+    </wsad:InternalProc>
+    <wsad:InternalProc isExcluded="false" hasBadParams="false">
+      <wsad:Name>GetSalesreps</wsad:Name>
+      <wsad:ProcType>2</wsad:ProcType>
+      <wsad:MethodDetail isCustomized="false" usesUnknownDefault="true" useRetVal="true" usesTTMappingDefault="true" IsTTResultSet="true" usesBeforeImageDefault="false" IsMappedToSubmit="false">
+        <wsad:Name>GetSalesreps</wsad:Name>
+        <wsad:ReturnValue allowUnknown="true" ordinal="0" writeXmlBeforeImage="false">
+          <wsad:Name>retVal</wsad:Name>
+          <wsad:OrigName>retVal</wsad:OrigName>
+          <wsad:Type>39</wsad:Type>
+          <wsad:Mode>2</wsad:Mode>
+        </wsad:ReturnValue>
+      </wsad:MethodDetail>
+    </wsad:InternalProc>
+  </wsad:ProcDetail>
+</wsad:Operation>
+  </pidl:binding>
+</pidl:description>

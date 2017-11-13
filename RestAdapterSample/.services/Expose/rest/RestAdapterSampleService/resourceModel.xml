@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<prgs:model xmlns:prgs="http://www.progress.com/caf/camel/component/prgrs" id="resourceModel">
+  <prgs:resource consumes="application/json" name="_Salesreps" path="/Salesreps" produces="application/json">
+    <prgs:operation consumes="application/json" idls="RestAdapterSample/.services/AppServer/Salesrep/Salesreps.pidl::com.progress.openedge.pdt.bpmbindings" name="Salesrep.Salesreps..GetSalesreps" produces="application/json" verb="GET"/>
+  </prgs:resource>
+  <prgs:resource consumes="application/json" name="_Salesreps_Salesrep" path="/Salesreps/{Salesrep}" produces="application/json">
+    <prgs:operation consumes="application/json" idls="RestAdapterSample/.services/AppServer/Salesrep/Salesreps.pidl::com.progress.openedge.pdt.bpmbindings" name="Salesrep.Salesreps..GetSalesrep" produces="application/json" verb="GET">
+      <prgs:param name="Salesrep" type="PATH"/>
+    </prgs:operation>
+  </prgs:resource>
+</prgs:model>
